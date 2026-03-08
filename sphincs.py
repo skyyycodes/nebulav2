@@ -18,15 +18,18 @@ def build_stellar_tx_bytes() -> bytes:
     """Build a minimal Stellar XDR transaction and return the raw XDR bytes."""
     # Use a throwaway source keypair (Ed25519) just to build a valid XDR envelope.
     # The SPHINCS+ key is separate — it signs the XDR bytes, not the Stellar tx itself.
+    from stellar_sdk import Account
     source = Keypair.random()
     destination = Keypair.random().public_key
+    source_account = Account(account=source.public_key, sequence=1)
 
     builder = TransactionBuilder(
-        source_account=source.public_key,
+        source_account=source_account,
         network_passphrase=Network.TESTNET_NETWORK_PASSPHRASE,
         base_fee=100,
     )
-    builder.append_payment_op(destination=destination, asset_code="XLM", amount="10")
+    from stellar_sdk import Asset
+    builder.append_payment_op(destination=destination, asset=Asset.native(), amount="10")
     builder.set_timeout(30)
     tx = builder.build()
 
