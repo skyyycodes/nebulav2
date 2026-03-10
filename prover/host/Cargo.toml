@@ -10,10 +10,15 @@ serde = { workspace = true }
 serde_json = { workspace = true }
 sha2 = { workspace = true }
 hex = "0.4"
+falcon-rs = { workspace = true }
 boundless-market = { version = "1.3.3", optional = true }
 tokio = { version = "1", features = ["full"], optional = true }
 anyhow = { version = "1", optional = true }
 url = { version = "2", optional = true }
+
+[[bin]]
+name = "keygen"
+path = "src/keygen.rs"
 
 [features]
 boundless = ["dep:boundless-market", "dep:tokio", "dep:anyhow", "dep:url"]

@@ -1,24 +1,16 @@
 import json
-import oqs
-from stellar_sdk import Keypair, Network, TransactionBuilder, Server
+import subprocess
+import sys
+from stellar_sdk import Keypair, Network, TransactionBuilder
 
-# SLH-DSA (SPHINCS+) — NIST FIPS 205
-# Using SHAKE variant: better pure-Rust RISC-V compat in the zkVM guest
-ALGORITHM = "SLH_DSA_PURE_SHAKE_128F"
-
-
-def generate_keypair():
-    with oqs.Signature(ALGORITHM) as signer:
-        public_key = signer.generate_keypair()
-        private_key = signer.export_secret_key()
-    return public_key, private_key
+# Falcon-512 (FN-DSA, FIPS 206) — keygen/sign done via Rust `keygen` binary
+# This ensures the same falcon-rs format is used in both signing and zkVM verification.
+KEYGEN_BIN = "prover/target/release/keygen"
 
 
 def build_stellar_tx_bytes() -> bytes:
     """Build a minimal Stellar XDR transaction and return the raw XDR bytes."""
-    # Use a throwaway source keypair (Ed25519) just to build a valid XDR envelope.
-    # The SPHINCS+ key is separate — it signs the XDR bytes, not the Stellar tx itself.
-    from stellar_sdk import Account
+    from stellar_sdk import Account, Asset
     source = Keypair.random()
     destination = Keypair.random().public_key
     source_account = Account(account=source.public_key, sequence=1)
@@ -28,61 +20,33 @@ def build_stellar_tx_bytes() -> bytes:
         network_passphrase=Network.TESTNET_NETWORK_PASSPHRASE,
         base_fee=100,
     )
-    from stellar_sdk import Asset
     builder.append_payment_op(destination=destination, asset=Asset.native(), amount="10")
     builder.set_timeout(30)
     tx = builder.build()
 
-    # Return raw XDR bytes of the transaction envelope
     return tx.to_xdr().encode()
 
 
-def sign_tx_bytes(tx_bytes: bytes, private_key: bytes) -> bytes:
-    with oqs.Signature(ALGORITHM, secret_key=private_key) as signer:
-        return signer.sign(tx_bytes)
-
-
-def verify_tx_bytes(tx_bytes: bytes, signature: bytes, public_key: bytes) -> bool:
-    with oqs.Signature(ALGORITHM) as verifier:
-        return verifier.verify(tx_bytes, signature, public_key)
-
-
-def export_proof_inputs(public_key: bytes, tx_bytes: bytes, signature: bytes, path="proof_inputs.json"):
-    """Write inputs for the RISC Zero host to consume."""
-    data = {
-        "public_key": public_key.hex(),
-        "tx_bytes": tx_bytes.hex(),
-        "signature": signature.hex(),
-        "algorithm": ALGORITHM,
-    }
-    with open(path, "w") as f:
-        json.dump(data, f, indent=2)
-    print(f"Exported proof inputs → {path}")
+def generate_and_sign(tx_bytes: bytes, output_path: str = "proof_inputs.json"):
+    """Use Rust keygen binary to generate Falcon-512 keypair, sign tx_bytes, write proof_inputs.json."""
+    tx_hex = tx_bytes.hex()
+    result = subprocess.run(
+        [KEYGEN_BIN, tx_hex, output_path],
+        capture_output=True, text=True
+    )
+    if result.returncode != 0:
+        print(result.stderr, file=sys.stderr)
+        raise RuntimeError(f"keygen binary failed: {result.returncode}")
+    print(result.stdout, end="")
+    with open(output_path) as f:
+        return json.load(f)
 
 
 if __name__ == "__main__":
-    print(f"Algorithm: {ALGORITHM}\n")
+    print("Algorithm: Falcon-512 (FN-DSA, FIPS 206)\n")
 
-    # 1. Generate SPHINCS+ keypair
-    pub, priv = generate_keypair()
-    print(f"Public key  ({len(pub)} bytes): {pub.hex()[:48]}...")
-    print(f"Private key ({len(priv)} bytes): {priv.hex()[:48]}...\n")
-
-    # 2. Build a Stellar XDR transaction
     tx_bytes = build_stellar_tx_bytes()
     print(f"Stellar XDR tx ({len(tx_bytes)} bytes): {tx_bytes[:48]}...\n")
 
-    # 3. Sign with SPHINCS+ private key
-    sig = sign_tx_bytes(tx_bytes, priv)
-    print(f"Signature ({len(sig)} bytes): {sig.hex()[:48]}...\n")
-
-    # 4. Verify locally
-    valid = verify_tx_bytes(tx_bytes, sig, pub)
-    print(f"Local verification: {'PASS' if valid else 'FAIL'}")
-
-    # 5. Tamper test
-    tampered = tx_bytes[:-1] + bytes([tx_bytes[-1] ^ 0xFF])
-    print(f"Tampered tx:       {'PASS' if verify_tx_bytes(tampered, sig, pub) else 'FAIL (expected)'}\n")
-
-    # 6. Export for ZK prover
-    export_proof_inputs(pub, tx_bytes, sig)
+    data = generate_and_sign(tx_bytes)
+    print(f"\nproof_inputs.json written — ready for RISC Zero prover.")

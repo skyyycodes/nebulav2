@@ -93,11 +93,16 @@ mod boundless_prove {
             .await?;
 
         println!("Uploading guest ELF and submitting Groth16 proof request...");
+        // Set max price 1% above market (market ~19122 gwei total → ~19313 gwei)
+        let offer = boundless_market::request_builder::OfferParams::builder()
+            .max_price(boundless_market::alloy::primitives::U256::from(19_313_000_000_000u64))
+            .build()?;
         let request = client
             .new_request()
             .with_program(SPHINCS_GUEST_ELF)
             .with_stdin(input_bytes)
-            .with_groth16_proof();
+            .with_groth16_proof()
+            .with_offer(offer);
 
         let (request_id, expires_at) = client.submit(request).await?;
         println!("Request submitted: {} — waiting for fulfillment...", request_id);
@@ -131,6 +136,8 @@ mod boundless_prove {
 }
 
 fn prove_local(guest_inputs: &GuestInputs) -> ProofOutput {
+    use std::time::Instant;
+
     let env = ExecutorEnv::builder()
         .write(guest_inputs)
         .expect("failed to serialize guest inputs")
@@ -138,16 +145,35 @@ fn prove_local(guest_inputs: &GuestInputs) -> ProofOutput {
         .expect("failed to build executor env");
 
     println!("BOUNDLESS_RPC_URL not set — using local dev mode (STARK, not Groth16)");
-    println!("Running zkVM guest (this may take a while for SPHINCS+ verification)...");
+    println!("Running zkVM guest (Falcon-512 / FN-DSA verification)...");
+    println!();
+    println!("[Step 1/4] Executing guest in zkVM (trace generation)...");
+    let t0 = Instant::now();
+
+    // Enable RISC Zero tracing logs
+    std::env::set_var("RISC0_INFO", "1");
 
     let prover = default_prover();
+
+    println!("[Step 2/4] Prover initialized — starting STARK proof generation...");
+    println!("           (Falcon-512 is ~10-20x fewer cycles than SPHINCS+, target <5 min.)");
+    println!("           Elapsed so far: {:.1}s", t0.elapsed().as_secs_f32());
+    println!();
+
+    let t_prove = Instant::now();
     let receipt = prover
         .prove_with_opts(env, SPHINCS_GUEST_ELF, &ProverOpts::fast())
         .expect("proving failed")
         .receipt;
 
+    println!();
+    println!("[Step 3/4] STARK proof done in {:.1}s", t_prove.elapsed().as_secs_f32());
+    println!("           Total elapsed: {:.1}s", t0.elapsed().as_secs_f32());
+    println!("[Step 4/4] Verifying receipt...");
+
     receipt.verify(SPHINCS_GUEST_ID).expect("receipt verification failed");
-    println!("Proof generated and verified locally.");
+    println!("           Receipt verified. ✓");
+    println!("           Total time: {:.1}s", t0.elapsed().as_secs_f32());
 
     let journal = receipt.journal.bytes.clone();
     assert_eq!(journal.len(), 64, "unexpected journal length — guest may have panicked");

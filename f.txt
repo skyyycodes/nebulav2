@@ -1,0 +1,4 @@
+Option 3: Don't verify SPHINCS+ in zkVM at all
+
+Verify off-chain, submit just a hash commitment on-chain
+Loses the ZK property though
