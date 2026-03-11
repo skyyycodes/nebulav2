@@ -14,6 +14,17 @@ proof_inputs.json
 # Rust build artifacts
 prover/target/
 soroban/target/
+xmss/target/
+
+# Noir artifacts
+noir/target/
+
+# XMSS key (contains secret key!)
+key.json
+
+# Temp/debug files
+everythingwhathappend.txt
+fullflowplan.txt
 
 # Claude
 .claude/

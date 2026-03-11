@@ -1,8 +1,10 @@
 // RISC Zero Host — runs on your machine
 // 1. Reads proof_inputs.json (written by sphincs.py)
 // 2. Executes the guest in the zkVM
-// 3. Generates a Groth16 proof via Boundless network (set BOUNDLESS_* env vars)
-//    or falls back to local dev mode (STARK, fast but not Groth16)
+// 3. Generates a Groth16 proof via:
+//    - Bonsai network: set BONSAI_API_KEY + BONSAI_API_URL (recommended)
+//    - Boundless network: set BOUNDLESS_* env vars (feature = "boundless")
+//    - Local dev mode: no env vars (STARK only, not Groth16)
 // 4. Writes proof.json with seal + image_id + journal for Soroban
 
 use std::fs;
@@ -93,9 +95,10 @@ mod boundless_prove {
             .await?;
 
         println!("Uploading guest ELF and submitting Groth16 proof request...");
-        // Set max price 1% above market (market ~19122 gwei total → ~19313 gwei)
+        // Use max_price_per_mcycle — 500 gwei/Mcycle, well above market rate
+        // Falcon-512 circuit is ~300-500 Mcycles → total ~150k-250k gwei
         let offer = boundless_market::request_builder::OfferParams::builder()
-            .max_price(boundless_market::alloy::primitives::U256::from(19_313_000_000_000u64))
+            .max_price_per_mcycle(boundless_market::alloy::primitives::U256::from(500_000_000_000u64))
             .build()?;
         let request = client
             .new_request()
@@ -135,6 +138,60 @@ mod boundless_prove {
     }
 }
 
+/// Prove via Bonsai (RISC Zero hosted Groth16 network).
+/// Requires BONSAI_API_KEY and BONSAI_API_URL env vars.
+fn prove_bonsai(guest_inputs: &GuestInputs) -> ProofOutput {
+    use std::time::Instant;
+
+    println!("Bonsai mode: submitting Groth16 proof request to api.bonsai.xyz...");
+    println!("Running zkVM guest (Falcon-512 / FN-DSA verification)...");
+
+    let env = ExecutorEnv::builder()
+        .write(guest_inputs)
+        .expect("failed to serialize guest inputs")
+        .build()
+        .expect("failed to build executor env");
+
+    let t0 = Instant::now();
+    let prover = default_prover();
+
+    println!("Waiting for Bonsai to generate Groth16 proof (typically 2-5 min)...");
+
+    let receipt = prover
+        .prove_with_opts(env, SPHINCS_GUEST_ELF, &ProverOpts::groth16())
+        .expect("Bonsai proving failed")
+        .receipt;
+
+    println!("Proof done in {:.1}s", t0.elapsed().as_secs_f32());
+    println!("Verifying receipt locally...");
+    receipt.verify(SPHINCS_GUEST_ID).expect("receipt verification failed");
+    println!("Receipt verified. ✓");
+
+    let journal = receipt.journal.bytes.clone();
+    assert_eq!(journal.len(), 64, "unexpected journal length");
+
+    let pubkey_hash = hex::encode(&journal[..32]);
+    let tx_hash = hex::encode(&journal[32..]);
+
+    let seal = match receipt.inner.groth16() {
+        Ok(g) => hex::encode(&g.seal),
+        Err(e) => panic!("expected Groth16 seal from Bonsai but got: {e}"),
+    };
+
+    println!("  pubkey_hash: {pubkey_hash}");
+    println!("  tx_hash:     {tx_hash}");
+    println!("  seal_len:    {} bytes", hex::decode(&seal).unwrap().len());
+
+    ProofOutput {
+        seal,
+        image_id: image_id_hex(),
+        journal: hex::encode(&journal),
+        pubkey_hash,
+        tx_hash,
+    }
+}
+
+/// Prove locally (STARK only — no Groth16, cannot be verified on-chain).
 fn prove_local(guest_inputs: &GuestInputs) -> ProofOutput {
     use std::time::Instant;
 
@@ -144,21 +201,16 @@ fn prove_local(guest_inputs: &GuestInputs) -> ProofOutput {
         .build()
         .expect("failed to build executor env");
 
-    println!("BOUNDLESS_RPC_URL not set — using local dev mode (STARK, not Groth16)");
+    println!("Local mode (STARK, not Groth16 — for development only)");
     println!("Running zkVM guest (Falcon-512 / FN-DSA verification)...");
     println!();
-    println!("[Step 1/4] Executing guest in zkVM (trace generation)...");
-    let t0 = Instant::now();
 
-    // Enable RISC Zero tracing logs
+    let t0 = Instant::now();
     std::env::set_var("RISC0_INFO", "1");
 
     let prover = default_prover();
-
-    println!("[Step 2/4] Prover initialized — starting STARK proof generation...");
-    println!("           (Falcon-512 is ~10-20x fewer cycles than SPHINCS+, target <5 min.)");
-    println!("           Elapsed so far: {:.1}s", t0.elapsed().as_secs_f32());
-    println!();
+    println!("[Step 1/3] STARK proof generation started...");
+    println!("           (Falcon-512, ~7 min on CPU)");
 
     let t_prove = Instant::now();
     let receipt = prover
@@ -166,25 +218,22 @@ fn prove_local(guest_inputs: &GuestInputs) -> ProofOutput {
         .expect("proving failed")
         .receipt;
 
-    println!();
-    println!("[Step 3/4] STARK proof done in {:.1}s", t_prove.elapsed().as_secs_f32());
-    println!("           Total elapsed: {:.1}s", t0.elapsed().as_secs_f32());
-    println!("[Step 4/4] Verifying receipt...");
-
+    println!("[Step 2/3] STARK proof done in {:.1}s", t_prove.elapsed().as_secs_f32());
+    println!("[Step 3/3] Verifying receipt...");
     receipt.verify(SPHINCS_GUEST_ID).expect("receipt verification failed");
-    println!("           Receipt verified. ✓");
-    println!("           Total time: {:.1}s", t0.elapsed().as_secs_f32());
+    println!("           Receipt verified. ✓  (total: {:.1}s)", t0.elapsed().as_secs_f32());
 
     let journal = receipt.journal.bytes.clone();
-    assert_eq!(journal.len(), 64, "unexpected journal length — guest may have panicked");
+    assert_eq!(journal.len(), 64, "unexpected journal length");
 
     let pubkey_hash = hex::encode(&journal[..32]);
     let tx_hash = hex::encode(&journal[32..]);
 
+    // Local mode has no Groth16 seal — store journal as placeholder
     let seal = match receipt.inner.groth16() {
         Ok(g) => hex::encode(&g.seal),
         Err(_) => {
-            println!("Note: local dev mode — no Groth16 seal. Use Boundless for on-chain proof.");
+            println!("Note: no Groth16 seal in local mode. Use Bonsai for on-chain proof.");
             hex::encode(&receipt.journal.bytes)
         }
     };
@@ -203,7 +252,9 @@ fn prove_local(guest_inputs: &GuestInputs) -> ProofOutput {
 async fn main() {
     let (_inputs_path, output_path, guest_inputs) = load_inputs();
 
-    let output = if std::env::var("BOUNDLESS_RPC_URL").is_ok() {
+    let output = if std::env::var("BONSAI_API_KEY").is_ok() {
+        prove_bonsai(&guest_inputs)
+    } else if std::env::var("BOUNDLESS_RPC_URL").is_ok() {
         boundless_prove::prove_with_boundless(&guest_inputs)
             .await
             .expect("Boundless proving failed")
@@ -217,7 +268,13 @@ async fn main() {
 #[cfg(not(feature = "boundless"))]
 fn main() {
     let (_inputs_path, output_path, guest_inputs) = load_inputs();
-    let output = prove_local(&guest_inputs);
+
+    let output = if std::env::var("BONSAI_API_KEY").is_ok() {
+        prove_bonsai(&guest_inputs)
+    } else {
+        prove_local(&guest_inputs)
+    };
+
     write_output(&output_path, output);
 }
 

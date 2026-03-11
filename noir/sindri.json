@@ -1,0 +1,7 @@
+{
+  "circuit_type": "noir",
+  "name": "xmss_verifier",
+  "noir_version": "1.0.0-beta.19",
+  "prove_scheme": "ultra_honk",
+  "oracle_hash": "keccak"
+}
