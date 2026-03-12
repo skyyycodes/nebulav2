@@ -1,0 +1,108 @@
+{
+  "proof_id": "e01a2203-a57e-4dea-96b1-1e354dd3e742",
+  "circuit_name": "xmss_verifier_sp1_groth16",
+  "project_name": "xmss_verifier_sp1_groth16",
+  "circuit_id": "45580910-1595-4c24-a03a-c7f54574e9b0",
+  "circuit_type": "sp1",
+  "date_created": "2026-03-12T03:21:27.567Z",
+  "meta": {},
+  "perform_verify": true,
+  "status": "Ready",
+  "finished_processing": true,
+  "verified": true,
+  "team": "",
+  "team_avatar_url": "https://gravatar.com/avatar/17e23e50bedc63b4095e3d8204ce063b?s=400&d=identicon&r=x",
+  "team_name": "",
+  "team_slug": "eshandas",
+  "circuit_team": "",
+  "circuit_team_avatar_url": "https://gravatar.com/avatar/17e23e50bedc63b4095e3d8204ce063b?s=400&d=identicon&r=x",
+  "circuit_team_slug": "eshandas",
+  "compute_time": "P0DT00H01M01.971647S",
+  "compute_time_sec": 61.971647,
+  "compute_times": {
+    "prove": 57.29225,
+    "total": 61.97165,
+    "clean_up": 0.54539,
+    "file_setup": 0.68209,
+    "save_results": 0.28364,
+    "verify_check": 3.16827
+  },
+  "file_size": 2009,
+  "proof": {
+    "proof": "k4GnR3JvdGgxNpSS2UsyMTU3MDMxMjM4MjMxNDA0OTE3MDE1NTEwMjkyMTI1MDA3MTcwMzE4MzQ4NDE5OTQ1ODQ1NjkxMDc5Mzk4MDM1ODk0NTQ4NTMyNzfZTTEzOTkzMDI5ODU2MjQ1NTg4NDc2MTMyNjc1NTE2NzE2MTU2MjQ5NzIzNjA3NTg3MTM2NzQ2ODI0MjU5ODcxOTc4MDY3MDg0Nzk5MTE12gIAMDk5MTc3MjM3YTU3ZmE0NzIxZDMxOWQyZDdhYTQ0NmIxYzExNDJhNmJjOWFjYjRkNjFlNTExZmEzMTFiZGY0YjI1M2E0MmM4M2ZiNmZhZjU5ZDgzYzEwNTU3MjUwYzYyNDBjMzQ0Y2VmNTg0ZWRmNjRjMzFiMDNmYzZjYTVmMWMyNjQ1ZWIxYTQ4ZTdiNGE5YWY3YzZjNWRkMTM4MTNhYWNiNmZiZjg4M2RhMDFlNWYwMWMwNGVmZmU3MmNmNDdkMjFjMTIwYTYyN2FlMWU3MzM0MGI0ZjJjOGNmNTY1MTIxNmE2NzAyNzgxZWUzZGNlMTViZDc2YjM1NzIwZGViYTJlYTY0OTI3YWRlOWZhYWNhZTM2ZmNlZjEyNmU3ZmRhMWNhMTEwMTkwMjk2MGU1MDQ0NDU0ZGMxZDM2OGU0NWQwZjkwMjg3YWQxYjk3MzQyMGYxM2YyNGQ0YzM5NDBiZmY1ZTliMDhiYjk0OTkzNjliZTM0N2Q5NTgxYTNhODQwMThkZmVmODZiMzNmMjJkZGQ5YTQ1NGFlMGQ5YTkzMjcwMTM0Y2RiZDc1M2MzYjU1YzcyMThmNWRmYTMyMDAxZTFlZTU0YmQxOGJjOWZkMGM2ZWE4ZjA4MjY0Y2RhZTBkM2JiNjc4MThmNWI4ZmY0Y2ViMmMyYWQzM2I2YzI2ZDfaAogwOTkxNzcyMzdhNTdmYTQ3MjFkMzE5ZDJkN2FhNDQ2YjFjMTE0MmE2YmM5YWNiNGQ2MWU1MTFmYTMxMWJkZjRiMjUzYTQyYzgzZmI2ZmFmNTlkODNjMTA1NTcyNTBjNjI0MGMzNDRjZWY1ODRlZGY2NGMzMWIwM2ZjNmNhNWYxYzI2NDVlYjFhNDhlN2I0YTlhZjdjNmM1ZGQxMzgxM2FhY2I2ZmJmODgzZGEwMWU1ZjAxYzA0ZWZmZTcyY2Y0N2QyMWMxMjBhNjI3YWUxZTczMzQwYjRmMmM4Y2Y1NjUxMjE2YTY3MDI3ODFlZTNkY2UxNWJkNzZiMzU3MjBkZWJhMmVhNjQ5MjdhZGU5ZmFhY2FlMzZmY2VmMTI2ZTdmZGExY2ExMTAxOTAyOTYwZTUwNDQ0NTRkYzFkMzY4ZTQ1ZDBmOTAyODdhZDFiOTczNDIwZjEzZjI0ZDRjMzk0MGJmZjVlOWIwOGJiOTQ5OTM2OWJlMzQ3ZDk1ODFhM2E4NDAxOGRmZWY4NmIzM2YyMmRkZDlhNDU0YWUwZDlhOTMyNzAxMzRjZGJkNzUzYzNiNTVjNzIxOGY1ZGZhMzIwMDFlMWVlNTRiZDE4YmM5ZmQwYzZlYThmMDgyNjRjZGFlMGQzYmI2NzgxOGY1YjhmZjRjZWIyYzJhZDMzYjZjMjZkNzAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDDcACARzLbMoMydY8zSVcytQl7M48ynzPYhHV7Mxj/MvczpzIBbQFUcMTYnW29OzLSRkdwARFFnUsyuzIbMpszbzIPM2DFMAzAjzKrMuELMn8zbFltFbMznzJwazLzM9CgeS3UDzPZOAiJtAMzpzPbMpT3M4yjM+My0zMkLzLzMl23MwH1dWMzzzM3MiQ7M5hR5zLEBAAAAq3Y0LjAuMC1yYy4z"
+  },
+  "public": null,
+  "queue_time": "P0DT00H00M32.042150S",
+  "queue_time_sec": 32.04215,
+  "smart_contract_calldata": null,
+  "has_smart_contract_calldata": false,
+  "has_verification_key": true,
+  "verification_key": {
+    "vk": {
+      "commit": {
+        "value": [
+          1804235355,
+          1475257451,
+          1998116453,
+          604359248,
+          1612349393,
+          282296049,
+          1761463644,
+          401483768
+        ],
+        "_marker": null
+      },
+      "pc_start": 2117212,
+      "initial_global_cumulative_sum": {
+        "x": [
+          1844943260,
+          292473488,
+          629607190,
+          965916734,
+          1032582982,
+          1522588752,
+          298498746
+        ],
+        "y": [
+          1607707290,
+          952613752,
+          1334234624,
+          1141527919,
+          894202136,
+          977827803,
+          558766378
+        ]
+      },
+      "chip_information": [
+        [
+          "Program",
+          {
+            "log_n": 19,
+            "shift": 1
+          },
+          {
+            "width": 14,
+            "height": 524288
+          }
+        ],
+        [
+          "Byte",
+          {
+            "log_n": 16,
+            "shift": 1
+          },
+          {
+            "width": 11,
+            "height": 65536
+          }
+        ]
+      ],
+      "chip_ordering": {
+        "Program": 0,
+        "Byte": 1
+      }
+    }
+  },
+  "warnings": null,
+  "error": null
+}

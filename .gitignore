@@ -10,11 +10,14 @@ __pycache__/
 # Generated proof artifacts
 proof.json
 proof_inputs.json
+groth16_proof.json
 
 # Rust build artifacts
 prover/target/
 soroban/target/
 xmss/target/
+sp1/program/target/
+sp1/script/target/
 
 # Noir artifacts
 noir/target/

@@ -1,0 +1,6 @@
+{
+  "circuit_type": "sp1",
+  "name": "xmss_verifier_sp1_groth16",
+  "sp1_version": "4.1.3",
+  "proving_scheme": "groth16"
+}

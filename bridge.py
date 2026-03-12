@@ -1,182 +1,351 @@
 """
-bridge.py — orchestrates the full Falcon-512 ZK proof pipeline:
+bridge.py — orchestrates the SP1 XMSS ZK proof pipeline:
 
-  1. Build a Stellar XDR transaction (Python)
-  2. Generate Falcon-512 keypair + sign via Rust keygen binary → proof_inputs.json
-  3. Run the RISC Zero host prover → proof.json
-  4. Print the stellar CLI command to verify on-chain via Soroban
+  1. XMSS sign tx → proof_inputs.json
+  2. Submit proof to Sindri (SP1 Groth16)
+  3. Poll until ready
+  4. Parse proof → build stellar contract invoke command
 
 Usage:
-    python bridge.py [--local] [--skip-sign]
+    python bridge.py [--skip-sign] [--skip-prove] [--proof-id <id>]
 
-Proving modes (checked in order):
-  Boundless network (Groth16, no local GPU needed):
-    BOUNDLESS_RPC_URL        — Base Sepolia RPC, e.g. https://sepolia.base.org
-    BOUNDLESS_PRIVATE_KEY    — hex private key of your Base Sepolia wallet (needs testnet ETH)
-    BOUNDLESS_ORDER_STREAM_URL — defaults to https://base-sepolia.boundless.network
-    PINATA_JWT               — Pinata API JWT for storing guest ELF (free tier ok)
-
-  Local dev mode (STARK only, no Groth16, no on-chain verify):
-    omit BOUNDLESS_RPC_URL   — falls back to local CPU proving (~7 min)
-
-Soroban:
-    VERIFIER_CONTRACT_ID — Nethermind Groth16 verifier contract on Stellar testnet
-    SPHINCS_CONTRACT_ID  — your deployed Soroban wrapper contract
+Env vars:
+    SINDRI_API_KEY        — required for proving
+    VERIFIER_CONTRACT_ID  — deployed Soroban XMSS verifier contract ID
+    STELLAR_SECRET_KEY    — for contract invocation
 """
 
 import argparse
+import base64
+import hashlib
 import json
 import os
-import subprocess
+import struct
 import sys
+import time
+import urllib.request
+import urllib.error
 from pathlib import Path
 
-# Parse --local flag before loading .env
-_local_mode = "--local" in sys.argv
-
-# Auto-load .env if present (skip Boundless vars in local mode)
+# Auto-load .env
 _env_file = Path(__file__).parent / ".env"
 if _env_file.exists():
-    _skip = {"BOUNDLESS_RPC_URL", "BOUNDLESS_PRIVATE_KEY", "BOUNDLESS_ORDER_STREAM_URL"} if _local_mode else set()
     for line in _env_file.read_text().splitlines():
         line = line.strip()
         if line and not line.startswith("#") and "=" in line:
             k, _, v = line.partition("=")
-            if k.strip() not in _skip:
-                os.environ.setdefault(k.strip(), v.strip())
+            os.environ.setdefault(k.strip(), v.strip())
 
-# Project root
 ROOT = Path(__file__).parent
-PROVER_DIR = ROOT / "prover"
 PROOF_INPUTS = ROOT / "proof_inputs.json"
-PROOF_OUTPUT = ROOT / "proof.json"
+PROOF_CACHE  = ROOT / "groth16_proof.json"
+
+SINDRI_API = "https://sindri.app/api/v1"
+GROTH16_CIRCUIT_ID = "45580910-1595-4c24-a03a-c7f54574e9b0"
 
 
-def run_step(label: str, fn):
-    print(f"\n{'='*60}")
-    print(f"  {label}")
-    print(f"{'='*60}")
-    return fn()
+# ── helpers ──────────────────────────────────────────────────────────────────
+
+def sindri_request(path, data=None, method=None):
+    api_key = os.environ.get("SINDRI_API_KEY", "")
+    if not api_key:
+        sys.exit("SINDRI_API_KEY not set")
+    url = SINDRI_API + path
+    body = json.dumps(data).encode() if data is not None else None
+    req = urllib.request.Request(
+        url,
+        data=body,
+        method=method or ("POST" if body else "GET"),
+        headers={
+            "Authorization": f"Bearer {api_key}",
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+        },
+    )
+    try:
+        with urllib.request.urlopen(req) as resp:
+            return json.loads(resp.read())
+    except urllib.error.HTTPError as e:
+        body = e.read()
+        sys.exit(f"Sindri HTTP {e.code}: {body[:300]}")
 
 
-def step_keygen_and_sign():
-    sys.path.insert(0, str(ROOT))
-    from sphincs import build_stellar_tx_bytes, generate_and_sign
-
-    tx_bytes = build_stellar_tx_bytes()
-    print(f"Stellar XDR ({len(tx_bytes)} bytes): {tx_bytes[:32]}...")
-
-    data = generate_and_sign(tx_bytes, output_path=str(PROOF_INPUTS))
-    return data
+def bincode_vec_u8(data: bytes) -> bytes:
+    return struct.pack("<Q", len(data)) + data
 
 
-def step_prove():
-    env = os.environ.copy()
-    use_bonsai = bool(os.environ.get("BONSAI_API_KEY"))
-    use_boundless = bool(os.environ.get("BOUNDLESS_RPC_URL"))
-
-    cmd = [
-        "cargo", "+risc0", "run",
-        "--release",
-        "--manifest-path", str(PROVER_DIR / "Cargo.toml"),
-        "-p", "sphincs-host",
-        "--bin", "sphincs-host",
+def build_sp1_stdin(pk: bytes, tx: bytes, sig: bytes) -> dict:
+    """Build the SP1Stdin JSON that Sindri expects."""
+    buffer = [
+        list(bincode_vec_u8(pk)),
+        list(bincode_vec_u8(tx)),
+        list(bincode_vec_u8(sig)),
     ]
-    if use_bonsai:
-        print("Bonsai mode: Groth16 proof via api.bonsai.xyz")
-    elif use_boundless:
-        cmd += ["--features", "boundless"]
-        print("Boundless mode: proof will be generated by the network (Groth16)")
-    else:
-        print("Local mode: proof will be generated on this machine (STARK, ~7 min)")
-
-    cmd += ["--", str(PROOF_INPUTS), str(PROOF_OUTPUT)]
-    # Enable RISC Zero verbose logging
-    env["RISC0_INFO"] = "1"
-    env["RUST_LOG"] = "info"
-    env["RAYON_NUM_THREADS"] = "8"
-    print(f"Running: {' '.join(cmd)}")
-    import time
-    t_start = time.time()
-    result = subprocess.run(cmd, env=env)
-    print(f"\nProver wall time: {time.time() - t_start:.1f}s")
-    if result.returncode != 0:
-        print("\nProver failed. Check Cargo output above.")
-        sys.exit(1)
+    return {"buffer": buffer, "ptr": 0, "proofs": []}
 
 
-def step_print_soroban_cmd():
-    proof = json.loads(PROOF_OUTPUT.read_text())
+def decode_msgpack_proof(raw: bytes) -> dict:
+    """Minimal msgpack decoder for SP1 Groth16 proof structure."""
+    pos = [0]
 
-    verifier_id = os.environ.get("VERIFIER_CONTRACT_ID", "CBY3GOBGQXDGRR4K2KYJO2UOXDW5NRW6UKIQHUBNBNU2V3BXQBXGTVX7")
-    falcon_id   = os.environ.get("SPHINCS_CONTRACT_ID", "<deploy first — see below>")
-    wasm_path   = ROOT / "soroban" / "target" / "wasm32v1-none" / "release" / "sphincs_verifier.wasm"
+    def rb():
+        b = raw[pos[0]]; pos[0] += 1; return b
 
-    print(f"\nProof ready:")
-    print(f"  image_id:    {proof['image_id']}")
-    print(f"  journal:     {proof['journal']}")
-    print(f"  pubkey_hash: {proof['pubkey_hash']}")
-    print(f"  tx_hash:     {proof['tx_hash']}")
-    print(f"  seal_len:    {len(bytes.fromhex(proof['seal']))} bytes")
+    def rbs(n):
+        b = raw[pos[0]:pos[0]+n]; pos[0] += n; return b
 
-    not_deployed = falcon_id.startswith("<")
+    def decode():
+        b = rb()
+        if 0x90 <= b <= 0x9f: return [decode() for _ in range(b & 0x0f)]
+        if 0x80 <= b <= 0x8f:
+            d = {}
+            for _ in range(b & 0x0f): k = decode(); v = decode(); d[k] = v
+            return d
+        if 0xa0 <= b <= 0xbf: return rbs(b & 0x1f).decode()
+        if b == 0xd9: return rbs(rb()).decode()
+        if b == 0xda: return rbs(struct.unpack(">H", rbs(2))[0]).decode()
+        if b == 0xdb: return rbs(struct.unpack(">I", rbs(4))[0]).decode()
+        if b == 0xc4: return rbs(rb())
+        if b == 0xc5: return rbs(struct.unpack(">H", rbs(2))[0])
+        if b == 0xc6: return rbs(struct.unpack(">I", rbs(4))[0])
+        if b == 0xdc: return [decode() for _ in range(struct.unpack(">H", rbs(2))[0])]
+        if b == 0xdd: return [decode() for _ in range(struct.unpack(">I", rbs(4))[0])]
+        if b <= 0x7f: return b
+        if b >= 0xe0: return b - 256
+        if b == 0xcc: return rb()
+        if b == 0xcd: return struct.unpack(">H", rbs(2))[0]
+        if b == 0xce: return struct.unpack(">I", rbs(4))[0]
+        if b == 0xcf: return struct.unpack(">Q", rbs(8))[0]
+        raise ValueError(f"Unknown msgpack byte 0x{b:02x} at {pos[0]-1}")
+
+    result = decode()
+    inner = result[0]
+    g16 = inner["Groth16"]
+    pub_inputs, enc_proof_hex, raw_proof_hex, vkey_hash = g16
+    if isinstance(vkey_hash, list):
+        vkey_hash = bytes(vkey_hash)
+    return {
+        "pub_inputs": [str(pub_inputs[0]), str(pub_inputs[1])],
+        "enc_proof": bytes.fromhex(enc_proof_hex),   # 256 bytes
+        "raw_proof": bytes.fromhex(raw_proof_hex),   # 324 bytes
+        "vkey_hash": vkey_hash,                       # 32 bytes
+    }
+
+
+def build_proof_bytes(enc_proof: bytes, vkey_hash: bytes) -> bytes:
+    """Prepend 4-byte selector to get 260-byte SP1 Groth16 proof."""
+    selector = vkey_hash[:4]
+    return selector + enc_proof
+
+
+def build_public_values(proof_inputs: dict) -> bytes:
+    """Build 68-byte public_values: pubkey_hash(32) + tx_hash(32) + nonce(4 LE u32)."""
+    pk = bytes.fromhex(proof_inputs["public_key"])
+    tx = bytes.fromhex(proof_inputs["tx_bytes"])
+    leaf_index = proof_inputs.get("leaf_index", 0)
+    pubkey_hash = hashlib.sha256(pk).digest()
+    tx_hash = hashlib.sha256(tx).digest()
+    nonce = struct.pack("<I", leaf_index)
+    return pubkey_hash + tx_hash + nonce
+
+
+# ── steps ─────────────────────────────────────────────────────────────────────
+
+def step_sign():
+    """XMSS sign the tx → proof_inputs.json via xmss CLI."""
+    xmss_bin = ROOT / "xmss" / "target" / "release" / "xmss"
+    key_file  = ROOT / "key.json"
+
+    if not xmss_bin.exists():
+        print("Building XMSS binary...")
+        import subprocess
+        r = subprocess.run(
+            ["cargo", "build", "--release"],
+            cwd=ROOT / "xmss",
+        )
+        if r.returncode != 0:
+            sys.exit("xmss build failed")
+
+    if not key_file.exists():
+        print("Generating XMSS keypair...")
+        import subprocess
+        subprocess.run(
+            [str(xmss_bin), "keygen", "--out", str(key_file)],
+            check=True,
+        )
+
+    print("Signing tx with XMSS...")
+    import subprocess
+    tx_hex = "deadbeef" + "00" * 508  # 512-byte dummy tx
+    subprocess.run(
+        [str(xmss_bin), "sign", "--key", str(key_file), "--tx", tx_hex, "--out", str(PROOF_INPUTS)],
+        check=True,
+    )
+    print(f"proof_inputs.json written ({PROOF_INPUTS.stat().st_size} bytes)")
+
+
+def step_prove() -> str:
+    """Submit proof job to Sindri, return proof_id."""
+    inputs = json.loads(PROOF_INPUTS.read_text())
+    pk  = bytes.fromhex(inputs["public_key"])
+    tx  = bytes.fromhex(inputs["tx_bytes"])
+    sig = bytes.fromhex(inputs["signature"])
+
+    stdin = build_sp1_stdin(pk, tx, sig)
+    print(f"Submitting to Sindri circuit {GROTH16_CIRCUIT_ID[:8]}...")
+    resp = sindri_request(
+        f"/circuit/{GROTH16_CIRCUIT_ID}/prove",
+        {"proof_input": json.dumps(stdin)},
+    )
+    proof_id = resp["proof_id"]
+    print(f"Proof job submitted: {proof_id[:8]}...")
+    return proof_id
+
+
+def step_poll(proof_id: str) -> dict:
+    """Poll Sindri until proof is ready, return detail response."""
+    print(f"Polling proof {proof_id[:8]}...", end="", flush=True)
+    for i in range(120):
+        detail = sindri_request(f"/proof/{proof_id}/detail")
+        status = detail.get("status", "?")
+        if status == "Ready":
+            print(f" Ready ({detail.get('compute_time', '')})")
+            return detail
+        if status in ("Failed", "Timed Out"):
+            err = detail.get("error", "")
+            sys.exit(f"\nProof {status}: {err[:300]}")
+        print(".", end="", flush=True)
+        time.sleep(30)
+    sys.exit("\nTimed out waiting for proof")
+
+
+def step_parse_and_print(detail: dict, inputs: dict):
+    """Parse the Groth16 proof and print the stellar contract invoke command."""
+    proof_b64 = detail["proof"]["proof"]
+    raw = base64.b64decode(proof_b64)
+    parsed = decode_msgpack_proof(raw)
+
+    enc_proof  = parsed["enc_proof"]   # 256 bytes
+    vkey_hash  = parsed["vkey_hash"]   # 32 bytes
+    pub_inputs = parsed["pub_inputs"]  # [str, str]
+
+    proof_bytes     = build_proof_bytes(enc_proof, vkey_hash)
+    public_values   = build_public_values(inputs)
+
+    # program_vkey = pub_inputs[0] as 32-byte BE
+    program_vkey_int = int(pub_inputs[0])
+    program_vkey = program_vkey_int.to_bytes(32, "big")
+
+    # Save to cache
+    cache = {
+        "proof_id":       detail["proof_id"],
+        "proof_bytes":    proof_bytes.hex(),
+        "public_values":  public_values.hex(),
+        "program_vkey":   program_vkey.hex(),
+        "vkey_hash":      vkey_hash.hex(),
+        "pubkey_hash":    public_values[:32].hex(),
+        "tx_hash":        public_values[32:64].hex(),
+        "nonce":          struct.unpack("<I", public_values[64:])[0],
+    }
+    PROOF_CACHE.write_text(json.dumps(cache, indent=2))
+    print(f"Proof cached to {PROOF_CACHE}")
+
+    contract_id = os.environ.get("VERIFIER_CONTRACT_ID", "<deploy first>")
+    secret_key  = os.environ.get("STELLAR_SECRET_KEY", "YOUR_SECRET_KEY")
+    not_deployed = contract_id.startswith("<")
+
+    print(f"""
+{'='*70}
+PROOF READY
+{'='*70}
+proof_bytes   : {len(proof_bytes)} bytes
+public_values : {len(public_values)} bytes
+program_vkey  : {program_vkey.hex()}
+vkey_hash     : {vkey_hash.hex()}
+pubkey_hash   : {public_values[:32].hex()}
+tx_hash       : {public_values[32:64].hex()}
+nonce         : {cache['nonce']}
+""")
+
+    wasm = ROOT / "soroban" / "target" / "wasm32v1-none" / "release" / "sphincs_verifier.wasm"
 
     if not_deployed:
-        print(f"""
-── Step A: Deploy the Falcon verifier wrapper contract ──────────────────────
+        print(f"""── Deploy ──────────────────────────────────────────────────────────────────
+# Build the contract:
+cd {ROOT}/soroban && cargo build --target wasm32v1-none --release
+
+# Deploy:
 stellar contract deploy \\
-  --wasm {wasm_path} \\
-  --source-account YOUR_SECRET_KEY \\
+  --wasm {wasm} \\
+  --source-account {secret_key} \\
   --network testnet
 
-# Save the returned contract ID, then:
-
-── Step B: Configure the Nethermind verifier address ────────────────────────
+# Initialize with program_vkey:
 stellar contract invoke \\
-  --id <YOUR_FALCON_VERIFIER_CONTRACT_ID> \\
-  --source-account YOUR_SECRET_KEY \\
+  --id <CONTRACT_ID> \\
+  --source-account {secret_key} \\
   --network testnet \\
-  -- set_verifier \\
-  --verifier {verifier_id}
+  -- init \\
+  --program_vkey {program_vkey.hex()}
 
-# Set SPHINCS_CONTRACT_ID=<YOUR_FALCON_VERIFIER_CONTRACT_ID> in .env, then re-run bridge.py.
+# Set VERIFIER_CONTRACT_ID=<CONTRACT_ID> in .env, then re-run bridge.py --skip-prove
 """)
     else:
-        print(f"""
-── Verify proof on Stellar testnet ──────────────────────────────────────────
+        print(f"""── Verify on Stellar testnet ────────────────────────────────────────────────
 stellar contract invoke \\
-  --id {falcon_id} \\
-  --source-account YOUR_SECRET_KEY \\
+  --id {contract_id} \\
+  --source-account {secret_key} \\
   --network testnet \\
-  -- verify_falcon_tx \\
-  --seal {proof['seal']} \\
-  --image_id {proof['image_id']} \\
-  --journal {proof['journal']} \\
-  --pubkey_hash {proof['pubkey_hash']} \\
-  --tx_hash {proof['tx_hash']}
-
-Nethermind verifier: {verifier_id}
-Note: --seal must be a real Groth16 seal (from Boundless), not a local STARK seal.
+  -- verify_xmss_tx \\
+  --proof_bytes {proof_bytes.hex()} \\
+  --public_values {public_values.hex()}
 """)
 
+
+# ── main ──────────────────────────────────────────────────────────────────────
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--skip-sign", action="store_true",
-                        help="Skip key gen/signing, reuse existing proof_inputs.json")
-    parser.add_argument("--local", action="store_true",
-                        help="Force local STARK mode (ignore Boundless env vars)")
+    parser.add_argument("--skip-sign",  action="store_true", help="Skip signing, use existing proof_inputs.json")
+    parser.add_argument("--skip-prove", action="store_true", help="Skip proving, use cached groth16_proof.json")
+    parser.add_argument("--proof-id",   help="Use an existing Sindri proof ID")
     args = parser.parse_args()
 
-    if not args.skip_sign:
-        run_step("Step 1: Falcon-512 keygen + Stellar XDR sign", step_keygen_and_sign)
+    if not args.skip_sign and not args.skip_prove and not args.proof_id:
+        step_sign()
     else:
-        print("Skipping sign step, using existing proof_inputs.json")
+        if not PROOF_INPUTS.exists():
+            sys.exit("proof_inputs.json not found — run without --skip-sign first")
+        print(f"Using existing proof_inputs.json (leaf_index={json.loads(PROOF_INPUTS.read_text()).get('leaf_index',0)})")
 
-    run_step("Step 2: RISC Zero proving", step_prove)
-    run_step("Step 3: Soroban invocation", step_print_soroban_cmd)
+    inputs = json.loads(PROOF_INPUTS.read_text())
 
-    print("\nDone.")
+    if args.skip_prove:
+        if not PROOF_CACHE.exists():
+            sys.exit("groth16_proof.json not found — run without --skip-prove first")
+        cache = json.loads(PROOF_CACHE.read_text())
+        print(f"Using cached proof {cache['proof_id'][:8]}...")
+        proof_bytes   = bytes.fromhex(cache["proof_bytes"])
+        public_values = bytes.fromhex(cache["public_values"])
+        program_vkey  = bytes.fromhex(cache["program_vkey"])
+        contract_id   = os.environ.get("VERIFIER_CONTRACT_ID", "<deploy first>")
+        secret_key    = os.environ.get("STELLAR_SECRET_KEY", "YOUR_SECRET_KEY")
+        wasm = ROOT / "soroban" / "target" / "wasm32v1-none" / "release" / "sphincs_verifier.wasm"
+        print(f"""
+stellar contract invoke \\
+  --id {contract_id} \\
+  --source-account {secret_key} \\
+  --network testnet \\
+  -- verify_xmss_tx \\
+  --proof_bytes {proof_bytes.hex()} \\
+  --public_values {public_values.hex()}
+""")
+        return
+
+    proof_id = args.proof_id or step_prove()
+    detail   = step_poll(proof_id)
+    step_parse_and_print(detail, inputs)
+    print("Done.")
 
 
 if __name__ == "__main__":
