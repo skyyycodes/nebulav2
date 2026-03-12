@@ -4,6 +4,9 @@ on:
   release:
     types: [created]
 
+permissions:
+  contents: write
+
 jobs:
   build:
     name: Build ${{ matrix.target }}
@@ -36,8 +39,10 @@ jobs:
         working-directory: cli
         run: ${{ matrix.flags }} cargo build --release --target ${{ matrix.target }}
 
+      - name: Rename binary
+        run: cp cli/target/${{ matrix.target }}/release/nebula /tmp/${{ matrix.asset_name }}
+
       - name: Upload to release
         uses: softprops/action-gh-release@v2
         with:
-          files: cli/target/${{ matrix.target }}/release/nebula
-          asset_name: ${{ matrix.asset_name }}
+          files: /tmp/${{ matrix.asset_name }}
