@@ -8,8 +8,11 @@
 //!   nebula withdraw        — full flow: sign → prove → submit withdrawal on-chain
 //!   nebula prove           — generate/poll a proof (without submitting)
 //!   nebula submit          — submit a cached proof to the chain
+//!   nebula ui              — interactive TUI dashboard
 //!
 //! Config is read from .env in the project root (two levels up from cli/).
+
+mod tui;
 
 use std::{
     env,
@@ -96,6 +99,8 @@ enum Cmd {
         #[arg(long)]
         amount: i64,
     },
+    /// Interactive TUI dashboard
+    Ui,
 }
 
 #[derive(Subcommand)]
@@ -918,6 +923,66 @@ fn ensure_xmss_built(cfg: &Config) -> Result<()> {
     Ok(())
 }
 
+// ── TUI command ───────────────────────────────────────────────────────────────
+
+fn cmd_ui(cfg: &Config) -> Result<()> {
+    // Load key
+    let key = KeyFile::load(&cfg.key_file)?;
+    let pubkey_hash = key.pubkey_hash()?;
+    let pubkey_hash_hex = hex::encode(pubkey_hash);
+
+    // Fetch balance + nonce from chain
+    let balance_raw = run_stellar(&[
+        "contract", "invoke",
+        "--id", &cfg.wallet_contract,
+        "--source-account", &cfg.stellar_account,
+        "--network", "testnet",
+        "--", "balance",
+        "--pubkey_hash", &pubkey_hash_hex,
+    ]).unwrap_or_else(|_| "0".into());
+    let balance: i64 = balance_raw.trim_matches('"').parse().unwrap_or(0);
+
+    let nonce_raw = run_stellar(&[
+        "contract", "invoke",
+        "--id", &cfg.wallet_contract,
+        "--source-account", &cfg.stellar_account,
+        "--network", "testnet",
+        "--", "nonce",
+        "--pubkey_hash", &pubkey_hash_hex,
+    ]).unwrap_or_else(|_| "0".into());
+    let nonce: u32 = nonce_raw.trim_matches('"').parse().unwrap_or(0);
+
+    let wallet_info = tui::WalletInfo {
+        pubkey_hash: pubkey_hash_hex,
+        balance_stroops: balance,
+        nonce,
+        leaves_used: key.next_index,
+        leaves_total: 1024,
+    };
+
+    // Build history from proof cache if available
+    let mut history = Vec::new();
+    if cfg.proof_cache.exists() {
+        if let Ok(text) = std::fs::read_to_string(&cfg.proof_cache) {
+            if let Ok(cache) = serde_json::from_str::<ProofCache>(&text) {
+                if !cache.destination.is_empty() {
+                    history.push(tui::TxHistory {
+                        amount_stroops: cache.amount,
+                        destination: cache.destination,
+                        nonce: cache.nonce,
+                    });
+                }
+            }
+        }
+    }
+
+    let cfg_ref = cfg;
+    tui::run_tui(wallet_info, history, move |dest, amount| {
+        cmd_withdraw(cfg_ref, dest, amount, false, false, None)?;
+        Ok("submitted".to_string())
+    })
+}
+
 // ── Entry point ───────────────────────────────────────────────────────────────
 
 fn main() {
@@ -942,5 +1007,6 @@ fn run(cli: Cli) -> Result<()> {
             cmd_withdraw(&cfg, &destination, amount, skip_sign, skip_prove, proof_id),
         Cmd::Prove { proof_id } => cmd_prove_only(&cfg, proof_id),
         Cmd::Submit { destination, amount } => cmd_submit(&cfg, &destination, amount),
+        Cmd::Ui => cmd_ui(&cfg),
     }
 }
