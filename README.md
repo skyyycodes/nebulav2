@@ -103,4 +103,4 @@ XMSS is a NIST-standardized hash-based signature scheme. Unlike ECDSA/ed25519, i
 | ZK proving | SP1 (Succinct) + Groth16 via Sindri |
 | Smart contract | Soroban (Stellar) |
 | CLI | Rust |
-| Network | Stellar testnet |
+| Network | Stellar testnet |b
