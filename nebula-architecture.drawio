@@ -1,445 +1,211 @@
-<mxfile host="app.diagrams.net" modified="2026-03-14T00:00:00.000Z" agent="Claude" version="21.0.0" type="device">
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36" version="29.6.1">
   <diagram id="nebula-arch" name="Nebula Architecture">
-    <mxGraphModel dx="1800" dy="1000" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="3300" pageHeight="2200" math="0" shadow="1">
+    <mxGraphModel dx="1489" dy="760" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1800" pageHeight="1200" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-
-        <!-- ═══════════════════════════════════════════════════════ -->
-        <!-- TITLE -->
-        <!-- ═══════════════════════════════════════════════════════ -->
-        <mxCell id="title" value="Nebula — Post-Quantum Wallet Architecture" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=28;fontStyle=1;fontColor=#1a1a2e;" vertex="1" parent="1">
-          <mxGeometry x="600" y="30" width="2000" height="50" as="geometry" />
+        <mxCell id="title" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=22;fontStyle=1;fontColor=#1a1a1a;" value="Nebula — Post-Quantum Wallet on Stellar" vertex="1">
+          <mxGeometry height="40" width="1000" x="400" y="30" as="geometry" />
         </mxCell>
-        <mxCell id="subtitle" value="XMSS-SHA2_10_256  →  SP1 zkVM  →  Groth16 / BN254  →  Soroban Smart Contract  →  Stellar Testnet" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;fontColor=#666666;" vertex="1" parent="1">
-          <mxGeometry x="600" y="78" width="2000" height="28" as="geometry" />
+        <mxCell id="sub" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=12;fontColor=#666666;" value="XMSS signing  →  SP1 ZK proof  →  Groth16 / BN254  →  Soroban contract  →  Stellar testnet" vertex="1">
+          <mxGeometry height="24" width="1000" x="400" y="66" as="geometry" />
         </mxCell>
-
-        <!-- ═══════════════════════════════════════════════════════ -->
-        <!-- ZONE: USER / CLIENT LAYER -->
-        <!-- ═══════════════════════════════════════════════════════ -->
-        <mxCell id="zone-client" value="CLIENT LAYER" style="points=[[0,0],[0.25,0],[0.5,0],[0.75,0],[1,0],[1,0.25],[1,0.5],[1,0.75],[1,1],[0.75,1],[0.5,1],[0.25,1],[0,1],[0,0.75],[0,0.5],[0,0.25]];shape=mxgraph.lean_mapping.electronic_info_flow_edge;strokeColor=#0050ef;fillColor=#dae8fc;fontStyle=1;fontSize=13;fontColor=#0050ef;verticalAlign=top;spacingTop=6;swimlaneHead=0;align=center;" vertex="1" parent="1">
-          <mxGeometry x="60" y="120" width="780" height="820" as="geometry" />
+        <mxCell id="lane-user" parent="1" style="rounded=0;fillColor=#f5f5f5;strokeColor=#d0d0d0;opacity=40;" value="" vertex="1">
+          <mxGeometry height="900" width="220" x="40" y="100" as="geometry" />
         </mxCell>
-
-        <!-- Chrome Extension box -->
-        <mxCell id="ext-box" value="Chrome Extension (MV3)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1a1a2e;strokeColor=#8b5cf6;fontColor=#ffffff;fontSize=13;fontStyle=1;arcSize=8;" vertex="1" parent="1">
-          <mxGeometry x="100" y="170" width="700" height="40" as="geometry" />
+        <mxCell id="lane-sign" parent="1" style="rounded=0;fillColor=#f0fdf4;strokeColor=#bbf7d0;opacity=40;" value="" vertex="1">
+          <mxGeometry height="900" width="220" x="270" y="100" as="geometry" />
         </mxCell>
-
-        <!-- Popup UI -->
-        <mxCell id="popup" value="&lt;b&gt;popup.tsx&lt;/b&gt;&lt;br/&gt;React UI&lt;br/&gt;&lt;font color='#aaaaaa'&gt;Dashboard · Send Wizard&lt;br/&gt;Proving Progress · Activity&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#16213e;strokeColor=#8b5cf6;fontColor=#ffffff;fontSize=11;arcSize=10;" vertex="1" parent="1">
-          <mxGeometry x="100" y="240" width="200" height="100" as="geometry" />
+        <mxCell id="lane-zk" parent="1" style="rounded=0;fillColor=#faf5ff;strokeColor=#e9d5ff;opacity=40;" value="" vertex="1">
+          <mxGeometry height="900" width="220" x="500" y="100" as="geometry" />
         </mxCell>
-
-        <!-- Crypto.ts -->
-        <mxCell id="crypto-ts" value="&lt;b&gt;crypto.ts&lt;/b&gt;&lt;br/&gt;Key Management&lt;br/&gt;&lt;font color='#aaaaaa'&gt;PBKDF2 key derivation&lt;br/&gt;AES-GCM encrypt/decrypt&lt;br/&gt;chrome.storage.local&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#16213e;strokeColor=#8b5cf6;fontColor=#ffffff;fontSize=11;arcSize=10;" vertex="1" parent="1">
-          <mxGeometry x="330" y="240" width="200" height="100" as="geometry" />
+        <mxCell id="lane-relay" parent="1" style="rounded=0;fillColor=#fffbeb;strokeColor=#fde68a;opacity=40;" value="" vertex="1">
+          <mxGeometry height="900" width="220" x="730" y="100" as="geometry" />
         </mxCell>
-
-        <!-- Background.ts -->
-        <mxCell id="bg-ts" value="&lt;b&gt;background.ts&lt;/b&gt;&lt;br/&gt;Service Worker&lt;br/&gt;&lt;font color='#aaaaaa'&gt;buildTxBytes (108B)&lt;br/&gt;sindriProve()&lt;br/&gt;stellarSubmit() → relay&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#16213e;strokeColor=#8b5cf6;fontColor=#ffffff;fontSize=11;arcSize=10;" vertex="1" parent="1">
-          <mxGeometry x="560" y="240" width="200" height="100" as="geometry" />
+        <mxCell id="lane-contract" parent="1" style="rounded=0;fillColor=#f0f9ff;strokeColor=#bae6fd;opacity=40;" value="" vertex="1">
+          <mxGeometry height="900" width="220" x="960" y="100" as="geometry" />
         </mxCell>
-
-        <!-- WASM box -->
-        <mxCell id="wasm-box" value="&lt;b&gt;xmss-wasm&lt;/b&gt; (Rust → WASM)&lt;br/&gt;&lt;font color='#aaaaaa'&gt;xmss_keygen() → { pk, sk, next_index }&lt;br/&gt;xmss_sign(sk, tx_hex, leaf_idx) → sig_hex&lt;br/&gt;sha256() — pure Rust, no rand dependency&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0d2137;strokeColor=#22d3ee;fontColor=#ffffff;fontSize=11;arcSize=10;" vertex="1" parent="1">
-          <mxGeometry x="100" y="380" width="660" height="80" as="geometry" />
+        <mxCell id="lane-stellar" parent="1" style="rounded=0;fillColor=#f8fafc;strokeColor=#cbd5e1;opacity=40;" value="" vertex="1">
+          <mxGeometry height="900" width="220" x="1190" y="100" as="geometry" />
         </mxCell>
-
-        <!-- key.json -->
-        <mxCell id="keyjson" value="&lt;b&gt;key.json&lt;/b&gt; (encrypted in chrome.storage)&lt;br/&gt;&lt;font color='#aaaaaa'&gt;{ public_key: hex(68B), secret_key: hex, next_index: u32 }&lt;br/&gt;AES-GCM · PBKDF2(password, salt, 100k iter, SHA-256)&lt;/font&gt;" style="shape=mxgraph.android.phone2;strokeColor=#f59e0b;fillColor=#1c1500;fontColor=#f59e0b;fontSize=11;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-          <mxGeometry x="100" y="500" width="660" height="80" as="geometry" />
+        <mxCell id="h-user" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=12;fontStyle=1;fontColor=#374151;rotation=-90;" value="User / Client" vertex="1">
+          <mxGeometry height="20" width="120" x="42" y="550" as="geometry" />
         </mxCell>
-
-        <!-- Nebula CLI box -->
-        <mxCell id="cli-box" value="&lt;b&gt;nebula CLI&lt;/b&gt; (Rust binary)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1a1a2e;strokeColor=#8b5cf6;fontColor=#ffffff;fontSize=13;fontStyle=1;arcSize=8;" vertex="1" parent="1">
-          <mxGeometry x="100" y="630" width="700" height="40" as="geometry" />
+        <mxCell id="h-sign" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=12;fontStyle=1;fontColor=#15803d;rotation=-90;" value="XMSS Signing" vertex="1">
+          <mxGeometry height="20" width="120" x="210" y="550" as="geometry" />
         </mxCell>
-
-        <!-- CLI commands -->
-        <mxCell id="cli-create" value="&lt;b&gt;wallet create&lt;/b&gt;&lt;br/&gt;&lt;font color='#aaaaaa'&gt;xmss keygen&lt;br/&gt;→ key.json&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#16213e;strokeColor=#8b5cf6;fontColor=#ffffff;fontSize=10;arcSize=10;" vertex="1" parent="1">
-          <mxGeometry x="100" y="690" width="120" height="70" as="geometry" />
+        <mxCell id="h-zk" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=12;fontStyle=1;fontColor=#7c3aed;rotation=-90;" value="ZK Proving (Sindri)" vertex="1">
+          <mxGeometry height="20" width="140" x="430" y="545" as="geometry" />
         </mxCell>
-        <mxCell id="cli-fund" value="&lt;b&gt;fund&lt;/b&gt;&lt;br/&gt;&lt;font color='#aaaaaa'&gt;stellar contract&lt;br/&gt;invoke deposit&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#16213e;strokeColor=#8b5cf6;fontColor=#ffffff;fontSize=10;arcSize=10;" vertex="1" parent="1">
-          <mxGeometry x="235" y="690" width="120" height="70" as="geometry" />
+        <mxCell id="h-relay" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=12;fontStyle=1;fontColor=#92400e;rotation=-90;" value="Relay Server" vertex="1">
+          <mxGeometry height="20" width="110" x="730" y="522.5" as="geometry" />
         </mxCell>
-        <mxCell id="cli-withdraw" value="&lt;b&gt;withdraw&lt;/b&gt;&lt;br/&gt;&lt;font color='#aaaaaa'&gt;sign → prove&lt;br/&gt;→ submit&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#16213e;strokeColor=#8b5cf6;fontColor=#ffffff;fontSize=10;arcSize=10;" vertex="1" parent="1">
-          <mxGeometry x="370" y="690" width="120" height="70" as="geometry" />
+        <mxCell id="h-contract" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=12;fontStyle=1;fontColor=#0369a1;rotation=-90;" value="Soroban Contract" vertex="1">
+          <mxGeometry height="20" width="130" x="962" y="565" as="geometry" />
         </mxCell>
-        <mxCell id="cli-ui" value="&lt;b&gt;ui (TUI)&lt;/b&gt;&lt;br/&gt;&lt;font color='#aaaaaa'&gt;ratatui dashboard&lt;br/&gt;silent withdraw&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#16213e;strokeColor=#8b5cf6;fontColor=#ffffff;fontSize=10;arcSize=10;" vertex="1" parent="1">
-          <mxGeometry x="505" y="690" width="120" height="70" as="geometry" />
+        <mxCell id="h-stellar" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=12;fontStyle=1;fontColor=#374151;rotation=-90;" value="Stellar Network" vertex="1">
+          <mxGeometry height="20" width="110" x="1192" y="555" as="geometry" />
         </mxCell>
-        <mxCell id="cli-info" value="&lt;b&gt;wallet info&lt;/b&gt;&lt;br/&gt;&lt;font color='#aaaaaa'&gt;balance + nonce&lt;br/&gt;from chain&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#16213e;strokeColor=#8b5cf6;fontColor=#ffffff;fontSize=10;arcSize=10;" vertex="1" parent="1">
-          <mxGeometry x="640" y="690" width="120" height="70" as="geometry" />
+        <mxCell id="n-intent" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#9ca3af;fontSize=11;arcSize=12;" value="User initiates send&lt;br/&gt;&lt;font color=&#39;#6b7280&#39;&gt;&lt;i&gt;destination + amount&lt;/i&gt;&lt;/font&gt;" vertex="1">
+          <mxGeometry height="50" width="180" x="60" y="160" as="geometry" />
         </mxCell>
-
-        <!-- tx_bytes detail box -->
-        <mxCell id="txbytes-box" value="&lt;b&gt;tx_bytes (108 bytes) — what the user signs&lt;/b&gt;&lt;br/&gt;&lt;font color='#aaaaaa'&gt;[0..32]   contract_id  = [0,0,0,1] + contract_hash[0..28]&lt;br/&gt;[32..64]  pubkey_hash  = sha256(xmss_pk)&lt;br/&gt;[64..68]  wallet_nonce = LE u32&lt;br/&gt;[68..100] destination  = XDR.slice(4..36)&lt;br/&gt;[100..108] amount      = BE i64 stroops&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0a1628;strokeColor=#22d3ee;fontColor=#22d3ee;fontSize=10;arcSize=6;align=left;spacingLeft=10;" vertex="1" parent="1">
-          <mxGeometry x="100" y="790" width="660" height="110" as="geometry" />
+        <mxCell id="n-txbytes" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#9ca3af;fontSize=11;arcSize=12;" value="Build tx_bytes (108 B)&lt;br/&gt;&lt;font color=&#39;#6b7280&#39;&gt;&lt;i&gt;contract + pubkey_hash&lt;br/&gt;nonce + dest + amount&lt;/i&gt;&lt;/font&gt;" vertex="1">
+          <mxGeometry height="65" width="180" x="60" y="290" as="geometry" />
         </mxCell>
-
-        <!-- ═══════════════════════════════════════════════════════ -->
-        <!-- ZONE: XMSS / SIGNING LAYER -->
-        <!-- ═══════════════════════════════════════════════════════ -->
-        <mxCell id="zone-xmss" value="XMSS SIGNING LAYER  (Post-Quantum ✓)" style="points=[[0,0],[0.25,0],[0.5,0],[0.75,0],[1,0],[1,0.25],[1,0.5],[1,0.75],[1,1],[0.75,1],[0.5,1],[0.25,1],[0,1],[0,0.75],[0,0.5],[0,0.25]];shape=mxgraph.lean_mapping.electronic_info_flow_edge;strokeColor=#16a34a;fillColor=#f0fdf4;fontStyle=1;fontSize=13;fontColor=#16a34a;verticalAlign=top;spacingTop=6;" vertex="1" parent="1">
-          <mxGeometry x="900" y="120" width="640" height="820" as="geometry" />
+        <mxCell id="n-nonce" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#9ca3af;fontSize=11;arcSize=12;" value="Fetch wallet nonce&lt;br/&gt;&lt;font color=&#39;#6b7280&#39;&gt;&lt;i&gt;from contract storage&lt;/i&gt;&lt;/font&gt;" vertex="1">
+          <mxGeometry height="50" width="180" x="60" y="210" as="geometry" />
         </mxCell>
-
-        <mxCell id="xmss-title" value="XMSS-SHA2_10_256" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#14532d;strokeColor=#22c55e;fontColor=#ffffff;fontSize=13;fontStyle=1;arcSize=8;" vertex="1" parent="1">
-          <mxGeometry x="940" y="170" width="560" height="40" as="geometry" />
+        <mxCell id="n-sign" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f0fdf4;strokeColor=#16a34a;fontSize=11;arcSize=12;" value="XMSS-SHA2_10_256 Sign&lt;br/&gt;&lt;font color=&#39;#6b7280&#39;&gt;&lt;i&gt;h=10  w=16  n=32&lt;br/&gt;sig = 2500 B&lt;/i&gt;&lt;/font&gt;" vertex="1">
+          <mxGeometry height="65" width="180" x="290" y="410" as="geometry" />
         </mxCell>
-
-        <mxCell id="xmss-params" value="&lt;b&gt;Parameters (RFC 8391 / NIST SP 800-208)&lt;/b&gt;&lt;br/&gt;&lt;font color='#aaaaaa'&gt;n = 32   (SHA-256 output, bytes)&lt;br/&gt;h = 10   (tree height → 1024 one-time keys)&lt;br/&gt;w = 16   (Winternitz parameter)&lt;br/&gt;len = 67 (WOTS+ chains: 64 msg + 3 checksum)&lt;br/&gt;d = 1    (single-layer hypertree)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#052e16;strokeColor=#22c55e;fontColor=#ffffff;fontSize=11;arcSize=10;align=left;spacingLeft=10;" vertex="1" parent="1">
-          <mxGeometry x="940" y="230" width="260" height="120" as="geometry" />
+        <mxCell id="n-wots" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f0fdf4;strokeColor=#16a34a;fontSize=11;arcSize=12;" value="WOTS+ chains (67)&lt;br/&gt;&lt;font color=&#39;#6b7280&#39;&gt;&lt;i&gt;SHA-256 iterated&lt;/i&gt;&lt;/font&gt;" vertex="1">
+          <mxGeometry height="50" width="180" x="290" y="510" as="geometry" />
         </mxCell>
-
-        <mxCell id="xmss-sizes" value="&lt;b&gt;Key &amp; Signature Sizes&lt;/b&gt;&lt;br/&gt;&lt;font color='#aaaaaa'&gt;Public key:  68B = OID(4) + root(32) + pub_seed(32)&lt;br/&gt;Private key: large (full Merkle tree)&lt;br/&gt;Signature: 2500B&lt;br/&gt;  = idx(4) + r(32)&lt;br/&gt;  + wots_sig(67×32=2144)&lt;br/&gt;  + auth_path(10×32=320)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#052e16;strokeColor=#22c55e;fontColor=#ffffff;fontSize=11;arcSize=10;align=left;spacingLeft=10;" vertex="1" parent="1">
-          <mxGeometry x="1220" y="230" width="260" height="120" as="geometry" />
+        <mxCell id="n-auth" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f0fdf4;strokeColor=#16a34a;fontSize=11;arcSize=12;" value="Auth path traversal&lt;br/&gt;&lt;font color=&#39;#6b7280&#39;&gt;&lt;i&gt;10 Merkle siblings&lt;br/&gt;leaf → root&lt;/i&gt;&lt;/font&gt;" vertex="1">
+          <mxGeometry height="55" width="180" x="290" y="590" as="geometry" />
         </mxCell>
-
-        <!-- WOTS+ chain -->
-        <mxCell id="wots-box" value="&lt;b&gt;WOTS+ Signing (67 chains)&lt;/b&gt;&lt;br/&gt;&lt;font color='#aaaaaa'&gt;h_msg(r, root, idx, tx_bytes)&lt;br/&gt;→ 67 4-bit nibbles + 3 checksum nibbles&lt;br/&gt;Each chain: SHA-256 iterated (16-v) times forward&lt;br/&gt;Verification: iterated v times backward&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#052e16;strokeColor=#22c55e;fontColor=#ffffff;fontSize=11;arcSize=10;" vertex="1" parent="1">
-          <mxGeometry x="940" y="380" width="540" height="90" as="geometry" />
+        <mxCell id="n-sp1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#faf5ff;strokeColor=#7c3aed;fontSize=11;arcSize=12;" value="SP1 Guest (RISC-V)&lt;br/&gt;&lt;font color=&#39;#6b7280&#39;&gt;&lt;i&gt;XMSS verify in-circuit&lt;br/&gt;~1,200 SHA-256 calls&lt;/i&gt;&lt;/font&gt;" vertex="1">
+          <mxGeometry height="65" width="180" x="520" y="500" as="geometry" />
         </mxCell>
-
-        <!-- Merkle tree -->
-        <mxCell id="merkle-box" value="&lt;b&gt;Merkle Tree (h=10, 1024 leaves)&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#14532d;strokeColor=#22c55e;fontColor=#ffffff;fontSize=11;fontStyle=1;arcSize=10;" vertex="1" parent="1">
-          <mxGeometry x="940" y="500" width="540" height="30" as="geometry" />
+        <mxCell id="n-pubvals" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#faf5ff;strokeColor=#7c3aed;fontSize=11;arcSize=12;" value="Commit public values&lt;br/&gt;&lt;font color=&#39;#6b7280&#39;&gt;&lt;i&gt;sha256(pk) + sha256(tx)&lt;br/&gt;+ wallet_nonce&lt;/i&gt;&lt;/font&gt;" vertex="1">
+          <mxGeometry height="55" width="180" x="520" y="600" as="geometry" />
         </mxCell>
-
-        <!-- Tree visual -->
-        <mxCell id="tree-root" value="root" style="ellipse;whiteSpace=wrap;html=1;fillColor=#22c55e;strokeColor=#16a34a;fontColor=#000000;fontSize=10;fontStyle=1;" vertex="1" parent="1">
-          <mxGeometry x="1170" y="545" width="80" height="30" as="geometry" />
-        </mxCell>
-        <mxCell id="tree-l1a" value="node" style="ellipse;whiteSpace=wrap;html=1;fillColor=#16a34a;strokeColor=#15803d;fontColor=#ffffff;fontSize=9;" vertex="1" parent="1">
-          <mxGeometry x="1060" y="595" width="60" height="25" as="geometry" />
-        </mxCell>
-        <mxCell id="tree-l1b" value="node" style="ellipse;whiteSpace=wrap;html=1;fillColor=#16a34a;strokeColor=#15803d;fontColor=#ffffff;fontSize=9;" vertex="1" parent="1">
-          <mxGeometry x="1290" y="595" width="60" height="25" as="geometry" />
-        </mxCell>
-        <mxCell id="tree-l2a" value="leaf[0]" style="ellipse;whiteSpace=wrap;html=1;fillColor=#15803d;strokeColor=#166534;fontColor=#ffffff;fontSize=8;" vertex="1" parent="1">
-          <mxGeometry x="980" y="645" width="55" height="22" as="geometry" />
-        </mxCell>
-        <mxCell id="tree-l2b" value="leaf[1]" style="ellipse;whiteSpace=wrap;html=1;fillColor=#15803d;strokeColor=#166534;fontColor=#ffffff;fontSize=8;" vertex="1" parent="1">
-          <mxGeometry x="1050" y="645" width="55" height="22" as="geometry" />
-        </mxCell>
-        <mxCell id="tree-dots" value="· · · 1024 leaves · · ·" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=10;fontColor=#22c55e;" vertex="1" parent="1">
-          <mxGeometry x="1120" y="648" width="160" height="20" as="geometry" />
-        </mxCell>
-        <mxCell id="tree-l2c" value="leaf[1022]" style="ellipse;whiteSpace=wrap;html=1;fillColor=#15803d;strokeColor=#166534;fontColor=#ffffff;fontSize=8;" vertex="1" parent="1">
-          <mxGeometry x="1290" y="645" width="65" height="22" as="geometry" />
-        </mxCell>
-        <mxCell id="tree-l2d" value="leaf[1023]" style="ellipse;whiteSpace=wrap;html=1;fillColor=#15803d;strokeColor=#166534;fontColor=#ffffff;fontSize=8;" vertex="1" parent="1">
-          <mxGeometry x="1365" y="645" width="65" height="22" as="geometry" />
-        </mxCell>
-
-        <!-- Tree edges -->
-        <mxCell id="e-root-l1a" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#22c55e;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="tree-root" target="tree-l1a">
+        <mxCell id="wIz3Q288Hl3OHg5ZuB91-2" edge="1" parent="1" source="n-groth16" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.25;entryDx=0;entryDy=0;fillColor=#ffe6cc;strokeColor=#d79b00;" target="n-invoke">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="e-root-l1b" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#22c55e;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="tree-root" target="tree-l1b">
+        <mxCell id="wIz3Q288Hl3OHg5ZuB91-3" connectable="0" parent="wIz3Q288Hl3OHg5ZuB91-2" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="CLI -DIrect FLow" vertex="1">
+          <mxGeometry relative="1" x="0.1131" y="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="n-groth16" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#faf5ff;strokeColor=#7c3aed;fontSize=11;arcSize=12;" value="Groth16 / BN254 proof&lt;br/&gt;&lt;font color=&#39;#6b7280&#39;&gt;&lt;i&gt;260 B proof&lt;br/&gt;68 B public values&lt;/i&gt;&lt;/font&gt;" vertex="1">
+          <mxGeometry height="55" width="180" x="520" y="690" as="geometry" />
+        </mxCell>
+        <mxCell id="n-relay" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fffbeb;strokeColor=#d97706;fontSize=11;arcSize=12;" value="Relay server&lt;br/&gt;&lt;font color=&#39;#6b7280&#39;&gt;&lt;i&gt;POST /withdraw&lt;br/&gt;Node.js + Docker&lt;/i&gt;&lt;/font&gt;" vertex="1">
+          <mxGeometry height="55" width="180" x="750" y="690" as="geometry" />
+        </mxCell>
+        <mxCell id="n-invoke" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fffbeb;strokeColor=#d97706;fontSize=11;arcSize=12;" value="stellar contract invoke&lt;br/&gt;&lt;font color=&#39;#6b7280&#39;&gt;&lt;i&gt;runs WASM locally&lt;br/&gt;bypasses simulation&lt;/i&gt;&lt;/font&gt;" vertex="1">
+          <mxGeometry height="55" width="180" x="750" y="780" as="geometry" />
+        </mxCell>
+        <mxCell id="n-withdraw" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f0f9ff;strokeColor=#0369a1;fontSize=11;arcSize=12;fontStyle=1;" value="withdraw()&lt;br/&gt;&lt;font color=&#39;#6b7280&#39;&gt;&lt;i&gt;Soroban WASM contract&lt;/i&gt;&lt;/font&gt;" vertex="1">
+          <mxGeometry height="50" width="180" x="980" y="780" as="geometry" />
+        </mxCell>
+        <mxCell id="n-check1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f0f9ff;strokeColor=#0369a1;fontSize=11;arcSize=12;" value="Nonce check&lt;br/&gt;&lt;font color=&#39;#6b7280&#39;&gt;&lt;i&gt;proof_nonce == stored&lt;/i&gt;&lt;/font&gt;" vertex="1">
+          <mxGeometry height="50" width="180" x="980" y="860" as="geometry" />
+        </mxCell>
+        <mxCell id="n-check2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f0f9ff;strokeColor=#0369a1;fontSize=11;arcSize=12;" value="tx_hash check&lt;br/&gt;&lt;font color=&#39;#6b7280&#39;&gt;&lt;i&gt;rebind dest + amount&lt;/i&gt;&lt;/font&gt;" vertex="1">
+          <mxGeometry height="50" width="180" x="980" y="920" as="geometry" />
+        </mxCell>
+        <mxCell id="n-check3" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f0f9ff;strokeColor=#0369a1;fontSize=11;arcSize=12;" value="Groth16 pairing verify&lt;br/&gt;&lt;font color=&#39;#6b7280&#39;&gt;&lt;i&gt;BN254 host functions&lt;/i&gt;&lt;/font&gt;" vertex="1">
+          <mxGeometry height="50" width="180" x="980" y="980" as="geometry" />
+        </mxCell>
+        <mxCell id="n-xlm" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8fafc;strokeColor=#64748b;fontSize=11;arcSize=12;" value="XLM transfer&lt;br/&gt;&lt;font color=&#39;#6b7280&#39;&gt;&lt;i&gt;contract → destination&lt;br/&gt;nonce + balance updated&lt;/i&gt;&lt;/font&gt;" vertex="1">
+          <mxGeometry height="55" width="180" x="1210" y="980" as="geometry" />
+        </mxCell>
+        <mxCell id="n-balance" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8fafc;strokeColor=#64748b;fontSize=11;arcSize=12;" value="balance() / nonce()&lt;br/&gt;&lt;font color=&#39;#6b7280&#39;&gt;&lt;i&gt;view — read contract state&lt;/i&gt;&lt;/font&gt;" vertex="1">
+          <mxGeometry height="50" width="180" x="1210" y="210" as="geometry" />
+        </mxCell>
+        <mxCell id="n-deposit" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f0f9ff;strokeColor=#0369a1;fontSize=11;arcSize=12;" value="deposit()&lt;br/&gt;&lt;font color=&#39;#6b7280&#39;&gt;&lt;i&gt;fund the nebula wallet&lt;br/&gt;from any Stellar account&lt;/i&gt;&lt;/font&gt;" vertex="1">
+          <mxGeometry height="55" width="180" x="980" y="200" as="geometry" />
+        </mxCell>
+        <mxCell id="e1" edge="1" parent="1" source="n-intent" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#374151;strokeWidth=1.5;" target="n-nonce" value="">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="e-l1a-l2a" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#16a34a;" edge="1" parent="1" source="tree-l1a" target="tree-l2a">
+        <mxCell id="e2" edge="1" parent="1" source="n-nonce" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#374151;strokeWidth=1.5;" target="n-txbytes" value="">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="e-l1a-l2b" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#16a34a;" edge="1" parent="1" source="tree-l1a" target="tree-l2b">
+        <mxCell id="e3" edge="1" parent="1" source="n-txbytes" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#16a34a;strokeWidth=1.5;fontColor=#16a34a;fontSize=10;" target="n-sign" value="sign(sk, tx_bytes)">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="e-l1b-l2c" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#16a34a;" edge="1" parent="1" source="tree-l1b" target="tree-l2c">
+        <mxCell id="e4" edge="1" parent="1" source="n-sign" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#16a34a;strokeWidth=1.5;" target="n-wots" value="">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="e-l1b-l2d" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#16a34a;" edge="1" parent="1" source="tree-l1b" target="tree-l2d">
+        <mxCell id="e5" edge="1" parent="1" source="n-wots" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#16a34a;strokeWidth=1.5;" target="n-auth" value="">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-
-        <mxCell id="xmss-security" value="🔒  Security: 2^128 quantum (Grover on SHA-256)&lt;br/&gt;Stateful: next_index must never be reused" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1c3a1c;strokeColor=#22c55e;fontColor=#86efac;fontSize=11;arcSize=10;" vertex="1" parent="1">
-          <mxGeometry x="940" y="690" width="540" height="50" as="geometry" />
-        </mxCell>
-
-        <mxCell id="proof-inputs" value="&lt;b&gt;proof_inputs.json&lt;/b&gt;&lt;br/&gt;&lt;font color='#aaaaaa'&gt;pk (68B hex) · tx_bytes (108B hex) · sig (2500B hex)&lt;br/&gt;wallet_nonce (from tx_bytes[64..68])&lt;/font&gt;" style="shape=mxgraph.android.phone2;strokeColor=#22c55e;fillColor=#052e16;fontColor=#22c55e;fontSize=11;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-          <mxGeometry x="940" y="760" width="540" height="70" as="geometry" />
-        </mxCell>
-
-        <!-- ═══════════════════════════════════════════════════════ -->
-        <!-- ZONE: SP1 / ZK LAYER -->
-        <!-- ═══════════════════════════════════════════════════════ -->
-        <mxCell id="zone-sp1" value="ZK PROVING LAYER  (SP1 + Sindri)" style="points=[[0,0],[0.25,0],[0.5,0],[0.75,0],[1,0],[1,0.25],[1,0.5],[1,0.75],[1,1],[0.75,1],[0.5,1],[0.25,1],[0,1],[0,0.75],[0,0.5],[0,0.25]];shape=mxgraph.lean_mapping.electronic_info_flow_edge;strokeColor=#7c3aed;fillColor=#f5f3ff;fontStyle=1;fontSize=13;fontColor=#7c3aed;verticalAlign=top;spacingTop=6;" vertex="1" parent="1">
-          <mxGeometry x="1600" y="120" width="740" height="820" as="geometry" />
-        </mxCell>
-
-        <!-- Sindri cloud -->
-        <mxCell id="sindri-cloud" value="Sindri Cloud Proving" style="shape=mxgraph.cisco.sites.generic_building;fillColor=#4c1d95;strokeColor=#8b5cf6;fontColor=#ffffff;fontSize=13;fontStyle=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-          <mxGeometry x="1850" y="155" width="80" height="70" as="geometry" />
-        </mxCell>
-        <mxCell id="sindri-label" value="sindri.app" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=11;fontColor=#8b5cf6;fontStyle=1;" vertex="1" parent="1">
-          <mxGeometry x="1830" y="225" width="120" height="20" as="geometry" />
-        </mxCell>
-
-        <!-- SP1 guest box -->
-        <mxCell id="sp1-guest" value="&lt;b&gt;SP1 Guest Program (RISC-V ELF)&lt;/b&gt;&lt;br/&gt;sp1/program/src/main.rs" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#2e1065;strokeColor=#8b5cf6;fontColor=#ffffff;fontSize=12;fontStyle=1;arcSize=8;" vertex="1" parent="1">
-          <mxGeometry x="1640" y="170" width="560" height="40" as="geometry" />
-        </mxCell>
-
-        <!-- Private inputs -->
-        <mxCell id="sp1-inputs" value="&lt;b&gt;Private Inputs (SP1Stdin)&lt;/b&gt;&lt;br/&gt;&lt;font color='#aaaaaa'&gt;bincode_vec_u8(pk)     → [u64_le_len || pk_bytes]&lt;br/&gt;bincode_vec_u8(tx)     → [u64_le_len || tx_bytes]&lt;br/&gt;bincode_vec_u8(sig)    → [u64_le_len || sig_bytes]&lt;br/&gt;JSON: {buffer: [pk,tx,sig], ptr:0, proofs:[]}&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1e1040;strokeColor=#8b5cf6;fontColor=#ffffff;fontSize=11;arcSize=10;align=left;spacingLeft=10;" vertex="1" parent="1">
-          <mxGeometry x="1640" y="230" width="340" height="110" as="geometry" />
-        </mxCell>
-
-        <!-- XMSS verifier -->
-        <mxCell id="sp1-verifier" value="&lt;b&gt;XMSS Verifier (in-circuit, pure SHA-256)&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#2e1065;strokeColor=#a78bfa;fontColor=#ffffff;fontSize=11;fontStyle=1;arcSize=8;" vertex="1" parent="1">
-          <mxGeometry x="1640" y="360" width="560" height="30" as="geometry" />
-        </mxCell>
-
-        <mxCell id="sp1-step1" value="&lt;b&gt;1. Parse signature&lt;/b&gt;&lt;br/&gt;&lt;font color='#aaaaaa'&gt;Extract idx, r, wots_sig[67], auth_path[10]&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1e1040;strokeColor=#7c3aed;fontColor=#ffffff;fontSize=10;arcSize=10;" vertex="1" parent="1">
-          <mxGeometry x="1640" y="405" width="270" height="55" as="geometry" />
-        </mxCell>
-        <mxCell id="sp1-step2" value="&lt;b&gt;2. h_msg computation&lt;/b&gt;&lt;br/&gt;&lt;font color='#aaaaaa'&gt;buf[120..128] = idx_bytes  ← fixed offset&lt;br/&gt;SHA-256(padding || r || root || idx || M)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1e1040;strokeColor=#7c3aed;fontColor=#ffffff;fontSize=10;arcSize=10;" vertex="1" parent="1">
-          <mxGeometry x="1930" y="405" width="270" height="55" as="geometry" />
-        </mxCell>
-        <mxCell id="sp1-step3" value="&lt;b&gt;3. WOTS+ chain eval (67 chains)&lt;/b&gt;&lt;br/&gt;&lt;font color='#aaaaaa'&gt;For each chain: SHA-256 iterated v times&lt;br/&gt;Recovers WOTS+ public key element&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1e1040;strokeColor=#7c3aed;fontColor=#ffffff;fontSize=10;arcSize=10;" vertex="1" parent="1">
-          <mxGeometry x="1640" y="475" width="270" height="55" as="geometry" />
-        </mxCell>
-        <mxCell id="sp1-step4" value="&lt;b&gt;4. L-tree → leaf hash&lt;/b&gt;&lt;br/&gt;&lt;font color='#aaaaaa'&gt;67 WOTS+ pk elements → single leaf&lt;br/&gt;Handles odd-length layers per RFC&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1e1040;strokeColor=#7c3aed;fontColor=#ffffff;fontSize=10;arcSize=10;" vertex="1" parent="1">
-          <mxGeometry x="1930" y="475" width="270" height="55" as="geometry" />
-        </mxCell>
-        <mxCell id="sp1-step5" value="&lt;b&gt;5. Auth path traversal (10 levels)&lt;/b&gt;&lt;br/&gt;&lt;font color='#aaaaaa'&gt;leaf → ... → computed_root&lt;br/&gt;Assert: computed_root == pk.root&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1e1040;strokeColor=#7c3aed;fontColor=#ffffff;fontSize=10;arcSize=10;" vertex="1" parent="1">
-          <mxGeometry x="1640" y="545" width="270" height="55" as="geometry" />
-        </mxCell>
-
-        <!-- Public outputs -->
-        <mxCell id="sp1-outputs" value="&lt;b&gt;Public Values Committed (68 bytes)&lt;/b&gt;&lt;br/&gt;&lt;font color='#aaaaaa'&gt;[0..32]  pubkey_hash  = sha256(pk_bytes)&lt;br/&gt;[32..64] tx_hash      = sha256(tx_bytes)&lt;br/&gt;[64..68] wallet_nonce = u32::from_le(tx_bytes[64..68])&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1e1040;strokeColor=#22d3ee;fontColor=#22d3ee;fontSize=11;arcSize=10;align=left;spacingLeft=10;" vertex="1" parent="1">
-          <mxGeometry x="1640" y="620" width="560" height="80" as="geometry" />
-        </mxCell>
-
-        <!-- Groth16 wrap -->
-        <mxCell id="groth16-box" value="&lt;b&gt;Groth16 Wrap (BN254)&lt;/b&gt;&lt;br/&gt;&lt;font color='#aaaaaa'&gt;pub_input[0] = program_vkey (Fr element)&lt;br/&gt;pub_input[1] = sha256(public_values) top-3-bits-zeroed&lt;br/&gt;Sindri circuit ID: 675b1311-8e2b-4b2c-9f16-44a548a3e2b7&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#2e1065;strokeColor=#a78bfa;fontColor=#ffffff;fontSize=11;arcSize=10;" vertex="1" parent="1">
-          <mxGeometry x="1640" y="720" width="560" height="80" as="geometry" />
-        </mxCell>
-
-        <!-- proof_bytes detail -->
-        <mxCell id="proof-bytes" value="&lt;b&gt;proof_bytes (260B)&lt;/b&gt;  +  &lt;b&gt;public_values (68B)&lt;/b&gt;&lt;br/&gt;&lt;font color='#aaaaaa'&gt;proof_bytes: vkey_hash[0..4] + A(64B) + B(128B) + C(64B)&lt;br/&gt;B layout: X.c1||X.c0||Y.c1||Y.c0  (Soroban imaginary-first)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1a0a40;strokeColor=#a78bfa;fontColor=#c4b5fd;fontSize=11;arcSize=10;" vertex="1" parent="1">
-          <mxGeometry x="1640" y="820" width="560" height="70" as="geometry" />
-        </mxCell>
-
-        <!-- ═══════════════════════════════════════════════════════ -->
-        <!-- ZONE: RELAY SERVER -->
-        <!-- ═══════════════════════════════════════════════════════ -->
-        <mxCell id="zone-relay" value="RELAY SERVER  (Docker / VM)" style="points=[[0,0],[0.25,0],[0.5,0],[0.75,0],[1,0],[1,0.25],[1,0.5],[1,0.75],[1,1],[0.75,1],[0.5,1],[0.25,1],[0,1],[0,0.75],[0,0.5],[0,0.25]];shape=mxgraph.lean_mapping.electronic_info_flow_edge;strokeColor=#d97706;fillColor=#fffbeb;fontStyle=1;fontSize=13;fontColor=#d97706;verticalAlign=top;spacingTop=6;" vertex="1" parent="1">
-          <mxGeometry x="60" y="1010" width="1160" height="380" as="geometry" />
-        </mxCell>
-
-        <mxCell id="relay-server" value="&lt;b&gt;server.js&lt;/b&gt; (Node.js ESM, no deps)&lt;br/&gt;backend.iameshan.tech/relayer" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#451a03;strokeColor=#f59e0b;fontColor=#ffffff;fontSize=12;fontStyle=1;arcSize=8;" vertex="1" parent="1">
-          <mxGeometry x="100" y="1055" width="560" height="40" as="geometry" />
-        </mxCell>
-
-        <mxCell id="relay-post" value="&lt;b&gt;POST /withdraw&lt;/b&gt;&lt;br/&gt;&lt;font color='#aaaaaa'&gt;{ proof_bytes, public_values,&lt;br/&gt;  destination, amount_stroops }&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#292524;strokeColor=#f59e0b;fontColor=#ffffff;fontSize=11;arcSize=10;" vertex="1" parent="1">
-          <mxGeometry x="100" y="1115" width="260" height="70" as="geometry" />
-        </mxCell>
-        <mxCell id="relay-health" value="&lt;b&gt;GET /health&lt;/b&gt;&lt;br/&gt;&lt;font color='#aaaaaa'&gt;{ ok: true }&lt;br/&gt;liveness check&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#292524;strokeColor=#f59e0b;fontColor=#ffffff;fontSize=11;arcSize=10;" vertex="1" parent="1">
-          <mxGeometry x="390" y="1115" width="260" height="70" as="geometry" />
-        </mxCell>
-
-        <mxCell id="relay-stellar" value="&lt;b&gt;stellar contract invoke withdraw&lt;/b&gt;&lt;br/&gt;&lt;font color='#aaaaaa'&gt;--network testnet --id &lt;CONTRACT&gt;&lt;br/&gt;-- withdraw --proof_bytes &lt;260B hex&gt;&lt;br/&gt;   --public_values &lt;68B hex&gt;&lt;br/&gt;   --destination &lt;G...&gt; --amount &lt;stroops&gt;&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1c1200;strokeColor=#f59e0b;fontColor=#fbbf24;fontSize=11;arcSize=10;align=left;spacingLeft=10;" vertex="1" parent="1">
-          <mxGeometry x="100" y="1210" width="560" height="100" as="geometry" />
-        </mxCell>
-
-        <mxCell id="relay-why" value="⚠️  Why relay?  Soroban testnet RPC disables BN254 pairing in simulateTransaction → UnreachableCodeReached.&lt;br/&gt;stellar contract invoke runs the WASM VM locally with full host functions, bypassing simulation.&lt;br/&gt;Relay CANNOT redirect funds — destination is cryptographically bound in the proof." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1c1200;strokeColor=#d97706;fontColor=#fde68a;fontSize=10;arcSize=8;" vertex="1" parent="1">
-          <mxGeometry x="100" y="1330" width="560" height="50" as="geometry" />
-        </mxCell>
-
-        <!-- Docker -->
-        <mxCell id="docker-box" value="&lt;b&gt;Dockerfile&lt;/b&gt;&lt;br/&gt;&lt;font color='#aaaaaa'&gt;FROM node:22-slim&lt;br/&gt;stellar CLI v23.4.1 (aarch64)&lt;br/&gt;entrypoint.sh: stellar keys add relayer --secret-key&lt;br/&gt;ENV RELAYER_SECRET, WALLET_CONTRACT, STELLAR_ACCOUNT&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1c2a3a;strokeColor=#38bdf8;fontColor=#7dd3fc;fontSize=11;arcSize=10;align=left;spacingLeft=10;" vertex="1" parent="1">
-          <mxGeometry x="700" y="1055" width="480" height="110" as="geometry" />
-        </mxCell>
-
-        <mxCell id="relay-trust" value="&lt;b&gt;Trust Model:&lt;/b&gt; Relay holds Stellar key for gas fees only.&lt;br/&gt;Cannot steal funds. Can censor (availability risk). No user key material stored." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1c1500;strokeColor=#d97706;fontColor=#fde68a;fontSize=10;arcSize=8;" vertex="1" parent="1">
-          <mxGeometry x="700" y="1185" width="480" height="50" as="geometry" />
-        </mxCell>
-
-        <!-- ═══════════════════════════════════════════════════════ -->
-        <!-- ZONE: SOROBAN CONTRACT -->
-        <!-- ═══════════════════════════════════════════════════════ -->
-        <mxCell id="zone-soroban" value="SOROBAN SMART CONTRACT  (Stellar Testnet)" style="points=[[0,0],[0.25,0],[0.5,0],[0.75,0],[1,0],[1,0.25],[1,0.5],[1,0.75],[1,1],[0.75,1],[0.5,1],[0.25,1],[0,1],[0,0.75],[0,0.5],[0,0.25]];shape=mxgraph.lean_mapping.electronic_info_flow_edge;strokeColor=#0891b2;fillColor=#ecfeff;fontStyle=1;fontSize=13;fontColor=#0891b2;verticalAlign=top;spacingTop=6;" vertex="1" parent="1">
-          <mxGeometry x="1280" y="1010" width="1060" height="380" as="geometry" />
-        </mxCell>
-
-        <mxCell id="contract-title" value="XmssWallet Contract  ·  CCQ4R5FTHPDBGPMYEWEDRKZMHWHYN4QB26DRTZCM4MICARWNLJK56Q6B" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0c1a20;strokeColor=#22d3ee;fontColor=#ffffff;fontSize=11;fontStyle=1;arcSize=8;" vertex="1" parent="1">
-          <mxGeometry x="1320" y="1055" width="980" height="36" as="geometry" />
-        </mxCell>
-
-        <!-- Storage -->
-        <mxCell id="storage-box" value="&lt;b&gt;Contract Storage&lt;/b&gt;&lt;br/&gt;&lt;font color='#aaaaaa'&gt;ProgramVKey  → BytesN&lt;32&gt;  (set at init)&lt;br/&gt;XlmToken     → Address     (XLM SAC)&lt;br/&gt;Balance(hash)→ i128 stroops&lt;br/&gt;Nonce(hash)  → u32&lt;/font&gt;" style="shape=mxgraph.flowchart.stored_data;whiteSpace=wrap;html=1;fillColor=#0c1a20;strokeColor=#22d3ee;fontColor=#67e8f9;fontSize=11;align=left;spacingLeft=10;" vertex="1" parent="1">
-          <mxGeometry x="1320" y="1105" width="280" height="110" as="geometry" />
-        </mxCell>
-
-        <!-- withdraw() -->
-        <mxCell id="withdraw-fn" value="&lt;b&gt;withdraw()&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0c2a3a;strokeColor=#22d3ee;fontColor=#ffffff;fontSize=12;fontStyle=1;arcSize=8;" vertex="1" parent="1">
-          <mxGeometry x="1640" y="1100" width="660" height="30" as="geometry" />
-        </mxCell>
-
-        <mxCell id="w-check1" value="&lt;b&gt;① Nonce check&lt;/b&gt;&lt;br/&gt;&lt;font color='#aaaaaa'&gt;proof_nonce == storage.nonce[pubkey_hash]&lt;br/&gt;Prevents replay attacks&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0c1a20;strokeColor=#22d3ee;fontColor=#ffffff;fontSize=10;arcSize=10;" vertex="1" parent="1">
-          <mxGeometry x="1640" y="1145" width="155" height="65" as="geometry" />
-        </mxCell>
-        <mxCell id="w-check2" value="&lt;b&gt;② tx_hash check&lt;/b&gt;&lt;br/&gt;&lt;font color='#aaaaaa'&gt;sha256(rebuild_tx_bytes(...)) ==&lt;br/&gt;proof_tx_hash&lt;br/&gt;Binds dest + amount&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0c1a20;strokeColor=#22d3ee;fontColor=#ffffff;fontSize=10;arcSize=10;" vertex="1" parent="1">
-          <mxGeometry x="1808" y="1145" width="155" height="65" as="geometry" />
-        </mxCell>
-        <mxCell id="w-check3" value="&lt;b&gt;③ Groth16 verify&lt;/b&gt;&lt;br/&gt;&lt;font color='#aaaaaa'&gt;BN254 pairing check&lt;br/&gt;e(A,B)·e(α,β)·e(vk_x,γ)·e(C,δ)==1&lt;br/&gt;Hardcoded VK constants&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0c1a20;strokeColor=#22d3ee;fontColor=#ffffff;fontSize=10;arcSize=10;" vertex="1" parent="1">
-          <mxGeometry x="1975" y="1145" width="155" height="65" as="geometry" />
-        </mxCell>
-        <mxCell id="w-check4" value="&lt;b&gt;④ Balance check&lt;/b&gt;&lt;br/&gt;&lt;font color='#aaaaaa'&gt;balance[pubkey_hash] &gt;= amount&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0c1a20;strokeColor=#22d3ee;fontColor=#ffffff;fontSize=10;arcSize=10;" vertex="1" parent="1">
-          <mxGeometry x="2143" y="1145" width="155" height="65" as="geometry" />
-        </mxCell>
-
-        <!-- State transition -->
-        <mxCell id="state-transition" value="&lt;b&gt;State Transition (atomic)&lt;/b&gt;&lt;br/&gt;&lt;font color='#aaaaaa'&gt;balance[pubkey_hash] -= amount&lt;br/&gt;nonce[pubkey_hash]  += 1&lt;br/&gt;xlm_token.transfer(contract → destination, amount)&lt;br/&gt;emit WithdrawEvent { pubkey_hash, destination, amount, new_balance, new_nonce }&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0c2a1a;strokeColor=#22c55e;fontColor=#86efac;fontSize=11;arcSize=10;align=left;spacingLeft=10;" vertex="1" parent="1">
-          <mxGeometry x="1640" y="1230" width="660" height="90" as="geometry" />
-        </mxCell>
-
-        <!-- deposit + other fns -->
-        <mxCell id="other-fns" value="&lt;b&gt;deposit(from, pubkey_hash, amount)&lt;/b&gt;&lt;br/&gt;&lt;font color='#aaaaaa'&gt;Soroban auth → transfer XLM to contract → balance += amount&lt;/font&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;balance(pubkey_hash) / nonce(pubkey_hash)&lt;/b&gt;&lt;br/&gt;&lt;font color='#aaaaaa'&gt;View functions — no state change&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0c1a20;strokeColor=#22d3ee;fontColor=#ffffff;fontSize=11;arcSize=10;" vertex="1" parent="1">
-          <mxGeometry x="1320" y="1235" width="290" height="110" as="geometry" />
-        </mxCell>
-
-        <!-- VK constants -->
-        <mxCell id="vk-box" value="&lt;b&gt;Hardcoded VK (SP1 v4.0.0-rc.3)&lt;/b&gt;&lt;br/&gt;&lt;font color='#aaaaaa'&gt;ALPHA_G1(64B) · BETA_NEG_G2(128B)&lt;br/&gt;GAMMA_NEG_G2(128B) · DELTA_NEG_G2(128B)&lt;br/&gt;IC[0](64B) · IC[1](64B) · IC[2](64B)&lt;br/&gt;vk_x = IC[0] + input0·IC[1] + input1·IC[2]&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1a0a40;strokeColor=#a78bfa;fontColor=#c4b5fd;fontSize=10;arcSize=10;align=left;spacingLeft=10;" vertex="1" parent="1">
-          <mxGeometry x="1320" y="1340" width="290" height="30" as="geometry" />
-        </mxCell>
-
-        <!-- Stellar network -->
-        <mxCell id="stellar-net" value="Stellar Testnet&lt;br/&gt;&lt;font color='#aaaaaa'&gt;XLM SAC: CDLZFC3S...HHGCYSC&lt;br/&gt;soroban-testnet.stellar.org&lt;/font&gt;" style="shape=mxgraph.cisco.sites.generic_building;fillColor=#1e3a5f;strokeColor=#38bdf8;fontColor=#7dd3fc;fontSize=11;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-          <mxGeometry x="2180" y="1270" width="120" height="80" as="geometry" />
-        </mxCell>
-
-        <!-- ═══════════════════════════════════════════════════════ -->
-        <!-- DATA FLOW ARROWS — main path -->
-        <!-- ═══════════════════════════════════════════════════════ -->
-
-        <!-- 1. User clicks Send → tx_bytes built -->
-        <mxCell id="flow1" value="① build tx_bytes" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#8b5cf6;strokeWidth=2;fontColor=#8b5cf6;fontSize=10;fontStyle=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="bg-ts" target="xmss-params">
+        <mxCell id="e6" edge="1" parent="1" source="n-auth" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#7c3aed;strokeWidth=1.5;fontColor=#7c3aed;fontSize=10;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" target="n-sp1" value="pk + tx + sig">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
-              <mxPoint x="800" y="290" />
-              <mxPoint x="800" y="290" />
+              <mxPoint x="470" y="590" />
+              <mxPoint x="610" y="590" />
             </Array>
           </mxGeometry>
         </mxCell>
-
-        <!-- 2. tx_bytes → XMSS sign -->
-        <mxCell id="flow2" value="② xmss_sign(sk, tx_hex, leaf_idx)" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#22c55e;strokeWidth=2;fontColor=#22c55e;fontSize=10;fontStyle=1;" edge="1" parent="1" source="txbytes-box" target="proof-inputs">
+        <mxCell id="e7" edge="1" parent="1" source="n-sp1" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#7c3aed;strokeWidth=1.5;" target="n-pubvals" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e8" edge="1" parent="1" source="n-pubvals" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#7c3aed;strokeWidth=1.5;" target="n-groth16" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e9" edge="1" parent="1" source="n-groth16" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#d97706;strokeWidth=1.5;fontColor=#d97706;fontSize=10;labelBackgroundColor=none;" target="n-relay" value="proof + &#xa;public_values">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e10" edge="1" parent="1" source="n-relay" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#d97706;strokeWidth=1.5;" target="n-invoke" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e11" edge="1" parent="1" source="n-invoke" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#0369a1;strokeWidth=1.5;fontColor=#0369a1;fontSize=10;" target="n-withdraw" value="invoke withdraw()">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e12" edge="1" parent="1" source="n-withdraw" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#0369a1;strokeWidth=1.5;" target="n-check1" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e13" edge="1" parent="1" source="n-check1" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#0369a1;strokeWidth=1.5;" target="n-check2" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e14" edge="1" parent="1" source="n-check2" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#0369a1;strokeWidth=1.5;" target="n-check3" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e15" edge="1" parent="1" source="n-check3" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#374151;strokeWidth=1.5;fontColor=#374151;fontSize=10;labelBackgroundColor=none;" target="n-xlm" value="XLM transfer">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-bal1" edge="1" parent="1" source="n-nonce" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#9ca3af;strokeWidth=1;dashed=1;fontColor=#9ca3af;fontSize=10;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" target="n-balance" value="read nonce">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
-              <mxPoint x="430" y="870" />
-              <mxPoint x="860" y="870" />
-              <mxPoint x="860" y="795" />
+              <mxPoint x="1070" y="235" />
+              <mxPoint x="1070" y="235" />
             </Array>
           </mxGeometry>
         </mxCell>
-
-        <!-- 3. proof_inputs → Sindri -->
-        <mxCell id="flow3" value="③ POST /circuit/{id}/prove" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#a78bfa;strokeWidth=2;fontColor=#a78bfa;fontSize=10;fontStyle=1;" edge="1" parent="1" source="proof-inputs" target="sp1-inputs">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-
-        <!-- 4. Sindri → proof_bytes -->
-        <mxCell id="flow4" value="④ Groth16 proof (260B + 68B)" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#a78bfa;strokeWidth=2;fontColor=#a78bfa;fontSize=10;fontStyle=1;" edge="1" parent="1" source="groth16-box" target="proof-bytes">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-
-        <!-- 5. proof_bytes → relay -->
-        <mxCell id="flow5" value="⑤ HTTPS POST proof + dest + amount" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#f59e0b;strokeWidth=2;fontColor=#f59e0b;fontSize=10;fontStyle=1;" edge="1" parent="1" source="proof-bytes" target="relay-post">
+        <mxCell id="e-dep" edge="1" parent="1" source="n-intent" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#9ca3af;strokeWidth=1;dashed=1;fontColor=#9ca3af;fontSize=10;" target="n-deposit" value="fund wallet">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
-              <mxPoint x="1210" y="855" />
-              <mxPoint x="1210" y="1150" />
-              <mxPoint x="230" y="1150" />
+              <mxPoint x="150" y="185" />
+              <mxPoint x="150" y="170" />
+              <mxPoint x="1070" y="170" />
+              <mxPoint x="1070" y="200" />
             </Array>
           </mxGeometry>
         </mxCell>
-
-        <!-- 6. relay → stellar contract invoke -->
-        <mxCell id="flow6" value="⑥ stellar contract invoke" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#f59e0b;strokeWidth=2;fontColor=#f59e0b;fontSize=10;fontStyle=1;" edge="1" parent="1" source="relay-post" target="relay-stellar">
-          <mxGeometry relative="1" as="geometry" />
+        <mxCell id="step1" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#374151;strokeColor=none;fontColor=#ffffff;fontSize=11;fontStyle=1;" value="1" vertex="1">
+          <mxGeometry height="24" width="24" x="16" y="173" as="geometry" />
         </mxCell>
-
-        <!-- 7. relay → soroban contract -->
-        <mxCell id="flow7" value="⑦ invoke withdraw()" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#22d3ee;strokeWidth=2;fontColor=#22d3ee;fontSize=10;fontStyle=1;" edge="1" parent="1" source="relay-stellar" target="withdraw-fn">
-          <mxGeometry relative="1" as="geometry">
-            <Array as="points">
-              <mxPoint x="380" y="1350" />
-              <mxPoint x="380" y="1420" />
-              <mxPoint x="1970" y="1420" />
-              <mxPoint x="1970" y="1130" />
-            </Array>
-          </mxGeometry>
+        <mxCell id="step2" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#374151;strokeColor=none;fontColor=#ffffff;fontSize=11;fontStyle=1;" value="2" vertex="1">
+          <mxGeometry height="24" width="24" x="16" y="303" as="geometry" />
         </mxCell>
-
-        <!-- 8. contract → stellar network (XLM transfer) -->
-        <mxCell id="flow8" value="⑧ XLM transfer" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#22c55e;strokeWidth=2;fontColor=#22c55e;fontSize=10;fontStyle=1;" edge="1" parent="1" source="state-transition" target="stellar-net">
-          <mxGeometry relative="1" as="geometry" />
+        <mxCell id="step3" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#16a34a;strokeColor=none;fontColor=#ffffff;fontSize=11;fontStyle=1;" value="3" vertex="1">
+          <mxGeometry height="24" width="24" x="16" y="423" as="geometry" />
         </mxCell>
-
-        <!-- ═══════════════════════════════════════════════════════ -->
-        <!-- NONCE / REPLAY PROTECTION CALLOUT -->
-        <!-- ═══════════════════════════════════════════════════════ -->
-        <mxCell id="nonce-design" value="&lt;b&gt;Nonce / Leaf-Index Decoupling&lt;/b&gt;&lt;br/&gt;&lt;font color='#aaaaaa'&gt;wallet_nonce  → on-chain replay protection (increments only on SUCCESS)&lt;br/&gt;XMSS leaf_idx → internal to signature scheme (increments every sign attempt)&lt;br/&gt;&lt;br/&gt;Failed tx: burns one XMSS leaf, does NOT advance wallet_nonce.&lt;br/&gt;Recovery:  re-sign with next leaf, same wallet_nonce → new valid proof.&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0a1628;strokeColor=#f59e0b;fontColor=#fde68a;fontSize=11;arcSize=8;align=left;spacingLeft=10;" vertex="1" parent="1">
-          <mxGeometry x="60" y="1440" width="760" height="110" as="geometry" />
+        <mxCell id="step4" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#7c3aed;strokeColor=none;fontColor=#ffffff;fontSize=11;fontStyle=1;" value="4" vertex="1">
+          <mxGeometry height="24" width="24" x="16" y="513" as="geometry" />
         </mxCell>
-
-        <!-- ═══════════════════════════════════════════════════════ -->
-        <!-- SECURITY PROPERTIES LEGEND -->
-        <!-- ═══════════════════════════════════════════════════════ -->
-        <mxCell id="sec-legend" value="&lt;b&gt;Security Properties&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1a1a2e;strokeColor=#8b5cf6;fontColor=#ffffff;fontSize=12;fontStyle=1;arcSize=8;" vertex="1" parent="1">
-          <mxGeometry x="880" y="1440" width="760" height="30" as="geometry" />
+        <mxCell id="step5" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#d97706;strokeColor=none;fontColor=#ffffff;fontSize=11;fontStyle=1;" value="5" vertex="1">
+          <mxGeometry height="24" width="24" x="16" y="703" as="geometry" />
         </mxCell>
-        <mxCell id="sec1" value="✅  Post-quantum signing (XMSS SHA-256 basis, 2^128 quantum security)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#052e16;strokeColor=#22c55e;fontColor=#86efac;fontSize=11;arcSize=8;" vertex="1" parent="1">
-          <mxGeometry x="880" y="1484" width="760" height="28" as="geometry" />
+        <mxCell id="step6" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#0369a1;strokeColor=none;fontColor=#ffffff;fontSize=11;fontStyle=1;" value="6" vertex="1">
+          <mxGeometry height="24" width="24" x="16" y="793" as="geometry" />
         </mxCell>
-        <mxCell id="sec2" value="✅  Destination/amount bound in proof — relay cannot redirect funds" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#052e16;strokeColor=#22c55e;fontColor=#86efac;fontSize=11;arcSize=8;" vertex="1" parent="1">
-          <mxGeometry x="880" y="1516" width="760" height="28" as="geometry" />
+        <mxCell id="note-nonce" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fafafa;strokeColor=#d1d5db;fontSize=10;arcSize=8;align=left;spacingLeft=8;" value="Nonce decoupling&lt;br/&gt;&lt;font color=&#39;#6b7280&#39;&gt;wallet_nonce increments only on success.&lt;br/&gt;Failed tx burns XMSS leaf but nonce unchanged.&lt;br/&gt;Re-sign with next leaf, same nonce.&lt;/font&gt;" vertex="1">
+          <mxGeometry height="80" width="200" x="60" y="410" as="geometry" />
         </mxCell>
-        <mxCell id="sec3" value="✅  Replay protection via independent wallet nonce" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#052e16;strokeColor=#22c55e;fontColor=#86efac;fontSize=11;arcSize=8;" vertex="1" parent="1">
-          <mxGeometry x="880" y="1548" width="760" height="28" as="geometry" />
+        <mxCell id="note-relay" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fafafa;strokeColor=#d1d5db;fontSize=10;arcSize=8;align=left;spacingLeft=8;" value="Trust boundary&lt;br/&gt;&lt;font color=&#39;#6b7280&#39;&gt;Relay cannot redirect funds.&lt;br/&gt;Destination is bound in the&lt;br/&gt;ZK proof — changing it fails&lt;br/&gt;the tx_hash check on-chain.&lt;/font&gt;" vertex="1">
+          <mxGeometry height="90" width="180" x="750" y="870" as="geometry" />
         </mxCell>
-        <mxCell id="sec4" value="⚠️  BN254 (Groth16) broken by Shor's — same gap as every ZK project today" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#2d1515;strokeColor=#ef4444;fontColor=#fca5a5;fontSize=11;arcSize=8;" vertex="1" parent="1">
-          <mxGeometry x="880" y="1580" width="760" height="28" as="geometry" />
+        <mxCell id="note-why" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fafafa;strokeColor=#d1d5db;fontSize=10;arcSize=8;align=left;spacingLeft=8;" value="Why relay?&lt;br&gt;&lt;font color=&quot;#6b7280&quot;&gt;Soroban testnet RPC disables&lt;br&gt;BN254 in simulateTransaction.&lt;br&gt;stellar contract invoke runs&lt;br&gt;WASM VM locally. [&lt;b&gt;NOT FOR CLI]&lt;/b&gt;&lt;/font&gt;" vertex="1">
+          <mxGeometry height="80" width="180" x="750" y="600" as="geometry" />
         </mxCell>
-        <mxCell id="sec5" value="🔮  Fix path: Soroban Poseidon host fns (live Jan 2026) → STARK verifier in contract" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1c1200;strokeColor=#f59e0b;fontColor=#fde68a;fontSize=11;arcSize=8;" vertex="1" parent="1">
-          <mxGeometry x="880" y="1612" width="760" height="28" as="geometry" />
+        <mxCell id="note-bn254" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fafafa;strokeColor=#fbbf24;fontSize=10;arcSize=8;align=left;spacingLeft=8;" value="Quantum note&lt;br/&gt;&lt;font color=&#39;#6b7280&#39;&gt;XMSS: post-quantum (SHA-256)&lt;br/&gt;BN254: quantum-vulnerable (Shor).&lt;br/&gt;Same gap as every ZK project&lt;br/&gt;on every chain today.&lt;/font&gt;" vertex="1">
+          <mxGeometry height="80" width="180" x="520" y="800" as="geometry" />
         </mxCell>
-
-        <!-- ═══════════════════════════════════════════════════════ -->
-        <!-- STACK SUMMARY TABLE -->
-        <!-- ═══════════════════════════════════════════════════════ -->
-        <mxCell id="stack-title" value="&lt;b&gt;Stack Summary&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1a1a2e;strokeColor=#8b5cf6;fontColor=#ffffff;fontSize=12;fontStyle=1;arcSize=8;" vertex="1" parent="1">
-          <mxGeometry x="1700" y="1440" width="600" height="30" as="geometry" />
-        </mxCell>
-        <mxCell id="stack1" value="Signing        XMSS-SHA2_10_256 (RFC 8391 / NIST SP 800-208)" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=11;fontColor=#e0e0e0;" vertex="1" parent="1">
-          <mxGeometry x="1700" y="1478" width="600" height="20" as="geometry" />
-        </mxCell>
-        <mxCell id="stack2" value="ZK proving     SP1 (Succinct) RISC-V zkVM" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=11;fontColor=#e0e0e0;" vertex="1" parent="1">
-          <mxGeometry x="1700" y="1500" width="600" height="20" as="geometry" />
-        </mxCell>
-        <mxCell id="stack3" value="Proof system   Groth16 on BN254" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=11;fontColor=#e0e0e0;" vertex="1" parent="1">
-          <mxGeometry x="1700" y="1522" width="600" height="20" as="geometry" />
-        </mxCell>
-        <mxCell id="stack4" value="Cloud proving  Sindri (managed SP1 → Groth16)" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=11;fontColor=#e0e0e0;" vertex="1" parent="1">
-          <mxGeometry x="1700" y="1544" width="600" height="20" as="geometry" />
-        </mxCell>
-        <mxCell id="stack5" value="Contract       Soroban (Stellar) — BN254 host fns" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=11;fontColor=#e0e0e0;" vertex="1" parent="1">
-          <mxGeometry x="1700" y="1566" width="600" height="20" as="geometry" />
-        </mxCell>
-        <mxCell id="stack6" value="CLI            Rust (nebula) + ratatui TUI" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=11;fontColor=#e0e0e0;" vertex="1" parent="1">
-          <mxGeometry x="1700" y="1588" width="600" height="20" as="geometry" />
-        </mxCell>
-        <mxCell id="stack7" value="Extension      Chrome MV3 · React · Vite · xmss-wasm" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=11;fontColor=#e0e0e0;" vertex="1" parent="1">
-          <mxGeometry x="1700" y="1610" width="600" height="20" as="geometry" />
-        </mxCell>
-        <mxCell id="stack8" value="Relay          Node.js · Docker · stellar CLI" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=11;fontColor=#e0e0e0;" vertex="1" parent="1">
-          <mxGeometry x="1700" y="1632" width="600" height="20" as="geometry" />
-        </mxCell>
-
       </root>
     </mxGraphModel>
   </diagram>
