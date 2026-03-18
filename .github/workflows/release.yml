@@ -37,6 +37,10 @@ jobs:
 
       - name: Build
         working-directory: cli
+        env:
+          NEBULA_WALLET_CONTRACT_ID:   ${{ secrets.WALLET_CONTRACT_ID }}
+          NEBULA_WALLET_CONTRACT_HASH: ${{ secrets.WALLET_CONTRACT_HASH }}
+          NEBULA_SINDRI_API_KEY:       ${{ secrets.SINDRI_API_KEY }}
         run: ${{ matrix.flags }} cargo build --release --target ${{ matrix.target }}
 
       - name: Rename binary

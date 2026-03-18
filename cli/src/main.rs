@@ -148,11 +148,19 @@ impl Config {
 
         load_dotenv(&root.join(".env"));
 
-        let wallet_contract = env_require("WALLET_CONTRACT_ID")?;
-        let contract_hash_hex = env_require("WALLET_CONTRACT_HASH")?;
+        // Fall back to values baked in at compile time (from GitHub secrets via RUSTFLAGS/build.rs).
+        const BAKED_CONTRACT_ID:   &str = env!("NEBULA_WALLET_CONTRACT_ID",   "NEBULA_WALLET_CONTRACT_ID not set at compile time");
+        const BAKED_CONTRACT_HASH: &str = env!("NEBULA_WALLET_CONTRACT_HASH", "NEBULA_WALLET_CONTRACT_HASH not set at compile time");
+        const BAKED_SINDRI_KEY:    &str = env!("NEBULA_SINDRI_API_KEY",       "NEBULA_SINDRI_API_KEY not set at compile time");
+
+        let wallet_contract = env::var("WALLET_CONTRACT_ID")
+            .unwrap_or_else(|_| BAKED_CONTRACT_ID.to_string());
+        let contract_hash_hex = env::var("WALLET_CONTRACT_HASH")
+            .unwrap_or_else(|_| BAKED_CONTRACT_HASH.to_string());
         let contract_hash = hex_to_32(&contract_hash_hex)
             .context("WALLET_CONTRACT_HASH must be 64 hex chars")?;
-        let sindri_api_key = env_require("SINDRI_API_KEY")?;
+        let sindri_api_key = env::var("SINDRI_API_KEY")
+            .unwrap_or_else(|_| BAKED_SINDRI_KEY.to_string());
         let stellar_account = env::var("STELLAR_ACCOUNT")
             .unwrap_or_else(|_| "quantum-deployer".into());
 
