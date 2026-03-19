@@ -1,6 +1,7 @@
 # nebula
 
 A post-quantum wallet for Stellar. Send XLM using XMSS signatures verified on-chain via a ZK proof — no classical cryptography in the signing path.
+<img width="1406" height="1021" alt="nebula-architecture drawio" src="https://github.com/user-attachments/assets/9cf3df54-0fb3-424e-85cf-432ab8e2c1b1" />
 
 ```
 XMSS sign → SP1 ZK proof → Groth16 (Sindri) → Soroban contract → XLM transfer
